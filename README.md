@@ -1,3 +1,20 @@
+## The Offical VegeMight Repository
+This is the official VegeMight Repository 🔥, where all our coders send the work of hours of slaving in the basement to. This repository contains all the current VegeMight code for the APOC competition, making use of LimeLight, PedroPathing, and the Dairy libraries. Our autonomous aims are to get at least a 0+5 in every match, with a 0+6 in some.
+
+## What our code is capable of doing/Aims
+*Disclaimer - we have not started working on this code yet
+❌ 0+5/6 autonomous
+❌ 5+0 autonomous
+❌ Robot subsystems
+❌ TeleOp
+
+If you have any questions, please contact us at vegemightrobotics@gmail.com, or message our instagram (vegemight.robotics). We are happy to answer any questions you have :D
+
+
+
+## NON PLUS ULTRA
+Below is jargon from the FTC SDK. I think you've read it a million times. So if you don't want to read it, don't read past here
+
 ## NOTICE
 
 This repository contains the public FTC SDK for the INTO THE DEEP (2024-2025) competition season.
