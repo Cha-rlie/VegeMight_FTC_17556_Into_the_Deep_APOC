@@ -3,10 +3,15 @@ This is the official VegeMight Repository 🔥, where all our coders send the wo
 
 ## What our code is capable of doing/Aims
 *Disclaimer - we have not started working on this code yet
+
 ❌ 0+5/6 autonomous
+
 ❌ 5+0 autonomous
+
 ❌ Robot subsystems
+
 ❌ TeleOp
+
 
 If you have any questions, please contact us at vegemightrobotics@gmail.com, or message our instagram (vegemight.robotics). We are happy to answer any questions you have :D
 
