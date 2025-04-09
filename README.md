@@ -4,7 +4,7 @@ This is the official VegeMight Repository 🔥, where all our coders send the wo
 ## What our code is capable of doing/Aims
 *Disclaimer - we have not started working on this code yet
 
-❌ 0+5/6 autonomous
+❌ 0+5/6 autonomous (see pathing below)
 
 ❌ 5+0 autonomous
 
@@ -22,9 +22,77 @@ If you have any questions, please contact us at vegemightrobotics@gmail.com, or 
 | Mar | Experimented with Dairy Command Structure. |
 | Apr 4 | Robot subsystems finalised and set up. Started to make robot move. |
 
+## Autonomous
+
+0+5/6: N/A
+<br>
+5+0: N/A
+
 ## NON PLUS ULTRA
 Below is jargon from the FTC SDK. I think you've read it a million times. So if you don't want to read it, don't read past here
 
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+I warned you
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
 ## NOTICE
 
 This repository contains the public FTC SDK for the INTO THE DEEP (2024-2025) competition season.
