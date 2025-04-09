@@ -15,7 +15,11 @@ This is the official VegeMight Repository 🔥, where all our coders send the wo
 
 If you have any questions, please contact us at vegemightrobotics@gmail.com, or message our instagram (vegemight.robotics). We are happy to answer any questions you have :D
 
-
+## TIMELINE
+| Date | Feature/Fix |
+| ------------- | ------------- |
+| Feb 25 | FEAT: Setup Dairy and Pedro |
+| Mar | Experiment with Dairy Command Structure |
 
 ## NON PLUS ULTRA
 Below is jargon from the FTC SDK. I think you've read it a million times. So if you don't want to read it, don't read past here
