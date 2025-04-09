@@ -18,8 +18,9 @@ If you have any questions, please contact us at vegemightrobotics@gmail.com, or 
 ## TIMELINE
 | Date | Feature/Fix |
 | ------------- | ------------- |
-| Feb 25 | FEAT: Setup Dairy and Pedro |
-| Mar | Experiment with Dairy Command Structure |
+| Feb 25 | Setup Dairy and Pedro. |
+| Mar | Experimented with Dairy Command Structure. |
+| Apr 4 | Robot subsystems finalised and set up. Started to make robot move. |
 
 ## NON PLUS ULTRA
 Below is jargon from the FTC SDK. I think you've read it a million times. So if you don't want to read it, don't read past here
