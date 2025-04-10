@@ -23,10 +23,21 @@ If you have any questions, please contact us at vegemightrobotics@gmail.com, or 
 | Apr 4 | Robot subsystems finalised and set up. Started to make robot move. |
 
 ## Autonomous
+☢ This Autonomous is in Development ☢
 
-0+5/6: N/A
+Our coders have slaved away tirelessly to create an autonomous, which is currently as volatile as the stock markets, and the accuracy of a fortune cookie. Our coders are working hard on fixing these issues before the robot turns into a gambler.  
+
+0+5/6: This code does not exist.
 <br>
-5+0: N/A
+5+0: This code does not exist.
+<br>
+## TeleOp
+☢ This TeleOp is in Development ☢
+
+<b> BREKAING NEWS</b>
+<br>
+As the robot is slowly being developed, the VegeMight coders are coding in parallel whilst they force our maths and physics person in a dungeon to work out the Inverse Kinematics and FeedForward. According to our sources, they are nearly finished with both the maths with the robot and code, however, it remains to be seen whether the robot will actually function. 
+
 
 ## NON PLUS ULTRA
 Below is jargon from the FTC SDK. I think you've read it a million times. So if you don't want to read it, don't read past here
