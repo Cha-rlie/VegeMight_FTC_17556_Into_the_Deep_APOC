@@ -34,7 +34,7 @@ Our coders have slaved away tirelessly to create an autonomous, which is current
 ## TeleOp
 ☢ This TeleOp is in Development ☢
 
-<b> BREKAING NEWS</b>
+<b> BREAKING NEWS</b>
 <br>
 As the robot is slowly being developed, the VegeMight coders are coding in parallel whilst they force our maths and physics person in a dungeon to work out the Inverse Kinematics and FeedForward. According to our sources, they are nearly finished with both the maths with the robot and code, however, it remains to be seen whether the robot will actually function. 
 
