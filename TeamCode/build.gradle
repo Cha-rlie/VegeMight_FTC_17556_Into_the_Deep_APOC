@@ -33,10 +33,11 @@ dependencies {
     implementation project(':FtcRobotController')
 
     // Dairy
-    implementation "dev.frozenmilk.dairy:Core:1.0.1"
-    implementation "dev.frozenmilk.dairy:Util:1.1.0"
-    implementation "dev.frozenmilk.mercurial:Mercurial:1.0.2"
+    implementation "dev.frozenmilk.dairy:Core:2.2.1"
+    implementation "dev.frozenmilk.dairy:Util:1.1.1"
+    implementation "dev.frozenmilk.mercurial:Mercurial:1.0.3"
     implementation "dev.frozenmilk.dairy:Pasteurized:1.0.0"
+    implementation "dev.frozenmilk.dairy:CachingHardware:1.0.0"
 
     // Pedro
 }
