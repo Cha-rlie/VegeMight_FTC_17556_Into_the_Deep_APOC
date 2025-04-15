@@ -21,6 +21,7 @@ If you have any questions, please contact us at vegemightrobotics@gmail.com, or 
 | Feb 25 | Setup Dairy and Pedro. |
 | Mar | Experimented with Dairy Command Structure. |
 | Apr 4 | Robot subsystems finalised and set up. Started to make robot move. |
+| Apr 16 | Robot is moving, started development on Pedro (sorry for the delay people, holidays) |
 
 ## Autonomous
 ☢ This Autonomous is in Development ☢
