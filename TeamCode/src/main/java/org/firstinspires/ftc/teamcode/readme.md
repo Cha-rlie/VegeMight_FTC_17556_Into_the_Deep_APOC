@@ -1,3 +1,92 @@
+## Overview
+Camembert: We have no clue what goes on in here
+Cheese Factory: Globals
+Opmodes: Well opmodes
+
+The robot uses set positions and different status, as well as limelight to automate picking up samples. 
+
+** Robot is under development ** 
+
+## Keybinds
+Standard driving keybinds for now. R2 to change speed to a predetermined speed in a given state. 
+
+
+
+
+
+
+
+
+
+
+
+## Non Plus Ultra
+FTC SDK STUFF BELOW
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br><br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br><br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br><br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br><br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br><br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br><br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br><br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br><br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+
 ## TeamCode Module
 
 Welcome!
