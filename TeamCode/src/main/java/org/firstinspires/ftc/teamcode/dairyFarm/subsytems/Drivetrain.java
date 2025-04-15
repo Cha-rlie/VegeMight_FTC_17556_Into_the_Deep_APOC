@@ -31,7 +31,7 @@ public class Drivetrain extends SDKSubsystem {
 
     public static final Drivetrain INSTANCE = new Drivetrain();
 
-    // Declare the motors and meccanum drive
+    // Declare the motors and mecanum drive
     private final Cell<CachingDcMotor> motorFL = subsystemCell(() -> new CachingDcMotor(getHardwareMap().get(DcMotorEx.class, "frontL")));
     private final Cell<CachingDcMotor> motorFR = subsystemCell(() -> new CachingDcMotor(getHardwareMap().get(DcMotorEx.class, "frontR")));
     private final Cell<CachingDcMotor> motorBL = subsystemCell(() -> new CachingDcMotor(getHardwareMap().get(DcMotorEx.class, "backL")));
@@ -49,8 +49,8 @@ public class Drivetrain extends SDKSubsystem {
 
     @Override
     public void preUserInitHook(@NonNull Wrapper opMode) {
-        // Test Dairy with telemetry
-        getTelemetry().addLine("PLEASE BE WORKING!");
+        // Init sequence
+        getTelemetry().addLine("Robot Initalising");
         getTelemetry().update();
 
         motorFR.get().setDirection(DcMotorSimple.Direction.REVERSE);
@@ -68,7 +68,7 @@ public class Drivetrain extends SDKSubsystem {
 
     @Override
     public void preUserLoopHook(@NonNull Wrapper opMode) {
-        getTelemetry().addLine("THIS IS RUNNING!");
+        getTelemetry().addLine("Robot Initalised");
         getTelemetry().update();
     }
 
