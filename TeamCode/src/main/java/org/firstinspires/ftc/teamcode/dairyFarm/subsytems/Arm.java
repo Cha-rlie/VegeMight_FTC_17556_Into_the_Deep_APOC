@@ -84,6 +84,24 @@ public class Arm extends SDKSubsystem {
         });
     }
 
+    @NonNull
+    public Lambda adjustArmUp() {
+        return new Lambda("adjust wrist")
+                .addExecute(()-> {
+                    leftArm.get().setPosition(leftArm.get().getPosition()+0.01);
+                    rightArm.get().setPosition(rightArm.get().getPosition()+0.01);
+                });
+    }
+
+    @NonNull
+    public Lambda adjustArmDown() {
+        return new Lambda("adjust wrist")
+                .addExecute(()-> {
+                    leftArm.get().setPosition(leftArm.get().getPosition()-0.01);
+                    rightArm.get().setPosition(rightArm.get().getPosition()+0.01);
+                });
+    }
+
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.TYPE)
     @MustBeDocumented

@@ -77,6 +77,14 @@ public class TeleOpTest extends OpMode {
                 Wrist.INSTANCE.adjustWristUp()
         );
 
+        Mercurial.gamepad2().triangle().onTrue(
+                Arm.INSTANCE.adjustArmUp()
+        );
+
+        Mercurial.gamepad2().cross().onTrue(
+                Arm.INSTANCE.adjustArmDown()
+        );
+
         telemetry.update();
     }
 
