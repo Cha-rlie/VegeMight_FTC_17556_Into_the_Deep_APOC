@@ -89,4 +89,23 @@ public class Arm extends SDKSubsystem {
                     motorLiftR.get().setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 });
     }
+
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.TYPE)
+    @MustBeDocumented
+    @Inherited
+    public @interface Attach{}
+
+    private Dependency<?> dependency = Subsystem.DEFAULT_DEPENDENCY.and(new SingleAnnotations<>(Drivetrain.Attach.class));
+
+    @NonNull
+    @Override
+    public Dependency<?> getDependency() {
+        return dependency;
+    }
+
+    @Override
+    public void setDependency(@NonNull Dependency<?> dependency) {
+        this.dependency = dependency;
+    }
 }
