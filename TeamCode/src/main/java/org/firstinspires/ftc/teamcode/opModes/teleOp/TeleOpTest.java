@@ -43,6 +43,10 @@ public class TeleOpTest extends OpMode {
 
         Mercurial.gamepad1().leftBumper().onTrue();
 
+        Mercurial.gamepad1().options().onTrue(
+                SampleManipulator.INSTANCE.toggleClaw()
+        );
+
         telemetry.update();
     }
 

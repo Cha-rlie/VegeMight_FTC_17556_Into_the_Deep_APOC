@@ -17,6 +17,7 @@ import dev.frozenmilk.dairy.cachinghardware.CachingServo;
 import dev.frozenmilk.dairy.core.dependency.Dependency;
 import dev.frozenmilk.dairy.core.dependency.annotation.SingleAnnotations;
 import dev.frozenmilk.dairy.core.wrapper.Wrapper;
+import dev.frozenmilk.mercurial.Mercurial;
 import dev.frozenmilk.mercurial.commands.Lambda;
 import dev.frozenmilk.mercurial.subsystems.SDKSubsystem;
 import dev.frozenmilk.mercurial.subsystems.Subsystem;
@@ -41,6 +42,7 @@ public class SampleManipulator extends SDKSubsystem {
         getTelemetry().update();
 
         setDefaultCommand(openCloseClaw());
+        
     }
 
     @NonNull
@@ -67,7 +69,7 @@ public class SampleManipulator extends SDKSubsystem {
                     }
                     if (clawOpen == true) {
                         clawServo.get().setPosition(0.8);
-                    } else if (clawOpen == false) {
+                    } else if (clawOpen != true) {
                         clawServo.get().setPosition(0.36);
                     }
                 });
