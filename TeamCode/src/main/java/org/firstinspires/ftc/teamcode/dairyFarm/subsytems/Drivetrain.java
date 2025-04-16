@@ -50,7 +50,7 @@ public class Drivetrain extends SDKSubsystem {
     @Override
     public void preUserInitHook(@NonNull Wrapper opMode) {
         // Init sequence
-        getTelemetry().addLine("Robot Initalising");
+        getTelemetry().addLine("Drivetrain Initalising");
         getTelemetry().update();
 
         motorFR.get().setDirection(DcMotorSimple.Direction.REVERSE);
@@ -68,7 +68,7 @@ public class Drivetrain extends SDKSubsystem {
 
     @Override
     public void preUserLoopHook(@NonNull Wrapper opMode) {
-        getTelemetry().addLine("Robot Initalised");
+        getTelemetry().addLine("Drivetrain Initalised");
         getTelemetry().update();
     }
 
