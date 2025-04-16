@@ -22,7 +22,7 @@ If you have any questions, please contact us at vegemightrobotics@gmail.com, or 
 | Mar    | Experimented with Dairy Command Structure.                                                                                       |
 | Apr 4  | Robot subsystems finalised and set up. Started to make robot move.                                                               |
 | Apr 15 | Robot is moving, started development on Pedro (sorry for the delay people, holidays)                                             |
-| Apr 16 | Working on other subsystems before Pedro, Flag, Arm, Wrist, and Slides are working. Will working on removing massive switches 😭 |
+| Apr 16 | Working on other subsystems before Pedro, Claw, Flag, Arm, Wrist, and Slides are working. Will working on removing massive switches 😭 |
 ## Autonomous
 ☢ This Autonomous is in Development ☢
 
