@@ -10,5 +10,9 @@ public enum RobotState {
 
     // Specimen scoring states
     INTAKESPECIMEN,
-    DEPOSITSPECIMEN
+    DEPOSITSPECIMEN,
+
+    //Park
+    PARKASCENT,
+    PARKNOASCENT
 }
