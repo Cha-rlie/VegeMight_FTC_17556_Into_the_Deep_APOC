@@ -8,6 +8,7 @@ import org.firstinspires.ftc.teamcode.dairyFarm.subsytems.Arm;
 import org.firstinspires.ftc.teamcode.dairyFarm.subsytems.Drivetrain;
 import org.firstinspires.ftc.teamcode.dairyFarm.subsytems.Flag;
 import org.firstinspires.ftc.teamcode.dairyFarm.subsytems.Lift;
+import org.firstinspires.ftc.teamcode.dairyFarm.subsytems.SampleManipulator;
 import org.firstinspires.ftc.teamcode.dairyFarm.subsytems.Wrist;
 
 import dev.frozenmilk.dairy.core.util.OpModeLazyCell;
@@ -23,6 +24,7 @@ import dev.frozenmilk.mercurial.Mercurial;
 @Lift.Attach
 @Wrist.Attach
 @Arm.Attach
+@SampleManipulator.Attach
 
 public class TeleOpTest extends OpMode {
 
