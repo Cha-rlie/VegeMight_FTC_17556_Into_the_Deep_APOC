@@ -45,7 +45,7 @@ public class Arm extends SDKSubsystem {
     @Override
     public void preUserInitHook(@NonNull Wrapper opMode) {
         // Init sequence
-        getTelemetry().addLine("Slides Initalising");
+        getTelemetry().addLine("Arm Initalising");
         getTelemetry().update();
         leftArm.get().setDirection(Servo.Direction.REVERSE);
 
@@ -59,14 +59,24 @@ public class Arm extends SDKSubsystem {
         .addExecute(() -> {
             switch (Globals.getCurrentInstance().getCurrentRobotState()) {
                 case IDLE:
+                    leftArm.get().setPosition(0);
+                    rightArm.get().setPosition(0);
                     break;
                 case DEPOSIT:
+                    leftArm.get().setPosition(0.237);
+                    rightArm.get().setPosition(0.237);
                     break;
                 case HOVERAFTERGRAB:
+                    leftArm.get().setPosition(0.4942);
+                    rightArm.get().setPosition(0.4942);
                     break;
                 case HOVERBEFOREGRAB:
+                    leftArm.get().setPosition(0.4942);
+                    rightArm.get().setPosition(0.4942);
                     break;
                 case GRAB:
+                    leftArm.get().setPosition(0.5723);
+                    rightArm.get().setPosition(0.5723);
                     break;
                 default:
                     break;

@@ -85,6 +85,7 @@ public class Lift extends SDKSubsystem {
                             motorLiftL.get().setTargetPosition(0);
                             motorLiftR.get().setTargetPosition(0);
                     }
+
                     motorLiftL.get().setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     motorLiftR.get().setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 });
