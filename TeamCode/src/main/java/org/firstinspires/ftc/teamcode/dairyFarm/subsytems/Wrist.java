@@ -68,6 +68,22 @@ public class Wrist extends SDKSubsystem {
                 );
     }
 
+    @NonNull
+    public Lambda adjustWristUp() {
+        return new Lambda("adjust wrist")
+            .addExecute(()-> {
+                wristServo.get().setPosition(wristServo.get().getPosition()+0.01);
+            });
+    }
+
+    @NonNull
+    public Lambda adjustWristDown() {
+        return new Lambda("adjust wrist")
+                .addExecute(()-> {
+                    wristServo.get().setPosition(wristServo.get().getPosition()-0.01);
+                });
+    }
+
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.TYPE)
     @MustBeDocumented
