@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.opModes.teleOp;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.robot.Robot;
 
 import org.firstinspires.ftc.teamcode.camembert.cheeseFactory.RobotState;
 import org.firstinspires.ftc.teamcode.dairyFarm.subsytems.Arm;
@@ -37,6 +38,11 @@ public class TeleOpTest extends OpMode {
         // Modify gamepads
 
         // Apply bindings
+
+        Mercurial.gamepad1().rightBumper().onTrue();
+
+        Mercurial.gamepad1().leftBumper().onTrue();
+
         telemetry.update();
     }
 

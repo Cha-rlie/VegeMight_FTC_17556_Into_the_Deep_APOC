@@ -26,7 +26,7 @@ import kotlin.annotation.MustBeDocumented;
 public class SampleManipulator extends SDKSubsystem {
 
     public static final SampleManipulator INSTANCE = new SampleManipulator();
-
+    public boolean clawOpen = false;
     private final Cell<CachingServo> clawServo = subsystemCell(() -> new CachingServo(getHardwareMap().get(Servo.class, "frontL")));
     //Use CRServo for Hybrid
     //For old bot sample and specimen manip is the same
@@ -50,20 +50,36 @@ public class SampleManipulator extends SDKSubsystem {
                 .addExecute(()-> {
                     switch (Globals.getCurrentInstance().getCurrentRobotState()) {
                         case IDLE:
-                            clawServo.get().setPosition(0.36);
+                            clawOpen = true;
                             break;
                         case GRAB:
-                            clawServo.get().setPosition(0.36);
+                            clawOpen = true;
                             break;
                         case DEPOSIT:
-                            clawServo.get().setPosition(0.36);
+                            clawOpen = true;
                             break;
                         case HOVERAFTERGRAB:
-                            clawServo.get().setPosition(0.36);
+                            clawOpen = true;
                             break;
                         default:
-                            clawServo.get().setPosition(0.8);
+                            clawOpen = false;
                             break;
+                    }
+                    if (clawOpen == true) {
+                        clawServo.get().setPosition(0.8);
+                    } else if (clawOpen == false) {
+                        clawServo.get().setPosition(0.36);
+                    }
+                });
+    }
+    @NonNull
+    public Lambda toggleClaw() {
+        return new Lambda ("Toggle Claw")
+                .addExecute(()-> {
+                    if (clawOpen == true) {
+                        clawOpen = false;
+                    } else if (clawOpen == false) {
+                        clawOpen = true;
                     }
                 });
     }
