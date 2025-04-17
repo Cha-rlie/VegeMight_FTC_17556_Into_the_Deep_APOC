@@ -73,6 +73,8 @@ public class Wrist extends SDKSubsystem {
         return new Lambda("adjust wrist")
             .addExecute(()-> {
                 wristServo.get().setPosition(wristServo.get().getPosition()+0.01);
+                getTelemetry().addLine("Wrist Adjusted");
+                getTelemetry().update();
             });
     }
 
@@ -81,6 +83,8 @@ public class Wrist extends SDKSubsystem {
         return new Lambda("adjust wrist")
                 .addExecute(()-> {
                     wristServo.get().setPosition(wristServo.get().getPosition()-0.01);
+                    getTelemetry().addLine("Wrist Adjusted");
+                    getTelemetry().update();
                 });
     }
 

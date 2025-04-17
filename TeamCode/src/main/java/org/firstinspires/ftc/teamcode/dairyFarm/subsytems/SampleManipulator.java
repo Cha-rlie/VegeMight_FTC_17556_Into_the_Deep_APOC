@@ -88,6 +88,8 @@ public class SampleManipulator extends SDKSubsystem {
                     } else if (clawOpen == false) {
                         clawOpen = true;
                     }
+                    getTelemetry().addLine("Claw Toggled");
+                    getTelemetry().update();
                 });
     }
 

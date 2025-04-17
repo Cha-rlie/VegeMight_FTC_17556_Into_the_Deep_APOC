@@ -90,6 +90,8 @@ public class Arm extends SDKSubsystem {
                 .addExecute(()-> {
                     leftArm.get().setPosition(leftArm.get().getPosition()+0.01);
                     rightArm.get().setPosition(rightArm.get().getPosition()+0.01);
+                    getTelemetry().addLine("Arm Adjusted");
+                    getTelemetry().update();
                 });
     }
 
@@ -99,6 +101,8 @@ public class Arm extends SDKSubsystem {
                 .addExecute(()-> {
                     leftArm.get().setPosition(leftArm.get().getPosition()-0.01);
                     rightArm.get().setPosition(rightArm.get().getPosition()+0.01);
+                    getTelemetry().addLine("Arm Adjusted");
+                    getTelemetry().update();
                 });
     }
 
