@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.dairyFarm.subsytems;
 
 import androidx.annotation.NonNull;
 
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.camembert.cheeseFactory.Globals;
@@ -12,6 +13,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import dev.frozenmilk.dairy.cachinghardware.CachingCRServo;
 import dev.frozenmilk.dairy.cachinghardware.CachingDcMotor;
 import dev.frozenmilk.dairy.cachinghardware.CachingServo;
 import dev.frozenmilk.dairy.core.dependency.Dependency;
@@ -30,6 +32,7 @@ public class SampleManipulator extends SDKSubsystem {
     public boolean clawOpen = false;
     private final Cell<CachingServo> clawServo = subsystemCell(() -> new CachingServo(getHardwareMap().get(Servo.class, "frontL")));
     //Use CRServo for Hybrid
+    //private final Cell<CachingCRServo> clawServo = subsystemCell(() -> new CachingCRServo(getHardwareMap().get(CRServo.class, "frontL")));
     //For old bot sample and specimen manip is the same
 
     private SampleManipulator(){
@@ -42,7 +45,7 @@ public class SampleManipulator extends SDKSubsystem {
         getTelemetry().update();
 
         setDefaultCommand(openCloseClaw());
-        
+
     }
 
     @NonNull
@@ -69,8 +72,10 @@ public class SampleManipulator extends SDKSubsystem {
                     }
                     if (clawOpen == true) {
                         clawServo.get().setPosition(0.8);
+                        //Turn forever
                     } else if (clawOpen != true) {
                         clawServo.get().setPosition(0.36);
+                        //Don't turn
                     }
                 });
     }
