@@ -32,6 +32,7 @@ import dev.frozenmilk.mercurial.commands.groups.Sequential;
 @Wrist.Attach
 @Arm.Attach
 @SampleManipulator.Attach
+//Attach Pitching Later
 
 public class TeleOpTest extends OpMode {
 
@@ -62,7 +63,7 @@ public class TeleOpTest extends OpMode {
 
     @NonNull
     public Lambda forwardsRobotState() {
-        return new Lambda("One Stage Forwards")
+        return new Lambda("One Stage Backwards")
                 .addExecute(() -> {
                     if (robotState.get() == RobotState.IDLE) {
                         robotState.accept(RobotState.DEPOSIT);
