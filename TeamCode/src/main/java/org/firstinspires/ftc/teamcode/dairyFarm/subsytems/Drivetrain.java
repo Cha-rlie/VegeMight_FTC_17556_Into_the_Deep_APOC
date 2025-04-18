@@ -21,6 +21,7 @@ import dev.frozenmilk.dairy.core.dependency.Dependency;
 import dev.frozenmilk.dairy.core.dependency.annotation.SingleAnnotations;
 import dev.frozenmilk.dairy.core.wrapper.Wrapper;
 import dev.frozenmilk.mercurial.commands.Lambda;
+import dev.frozenmilk.mercurial.commands.groups.Parallel;
 import dev.frozenmilk.mercurial.subsystems.SDKSubsystem;
 import dev.frozenmilk.mercurial.subsystems.Subsystem;
 import dev.frozenmilk.dairy.cachinghardware.CachingDcMotor;
@@ -61,8 +62,8 @@ public class Drivetrain extends SDKSubsystem {
         velocityAdjuster = 1;
         stopAllMotors();
 
-        setDefaultCommand(drive());
-        getTelemetry().addLine("Drivetrain Initalised");
+        setDefaultCommand(new Parallel(drive(), updateVelocityAdjuster()));
+        getTelemetry().addLine("Drivetrain Initialised");
 
     }
 
@@ -100,29 +101,33 @@ public class Drivetrain extends SDKSubsystem {
         return INSTANCE.velocityAdjuster;
     }
 
-    public static void updateVelocityAdjuster() {
-        switch (Globals.INSTANCE.getRobotState()) {
-            case IDLE:
-                if (FeatureRegistrar.getActiveOpMode().gamepad1.right_trigger > 0.5) {
-                    INSTANCE.velocityAdjuster = 0.7;
-                } else {
-                    INSTANCE.velocityAdjuster = 1.0;
-                }
-                break;
-            case DEPOSIT:
-                if (FeatureRegistrar.getActiveOpMode().gamepad1.right_trigger > 0.5) {
-                    INSTANCE.velocityAdjuster = 0.7;
-                } else {
-                    INSTANCE.velocityAdjuster = 0.8;
-                }
-                break;
-            default:
-                if (FeatureRegistrar.getActiveOpMode().gamepad1.right_trigger > 0.5) {
-                    INSTANCE.velocityAdjuster = 0.7;
-                } else {
-                    INSTANCE.velocityAdjuster = 0.5;
-                }
-        }
+    @NonNull
+    public static Lambda updateVelocityAdjuster() {
+        return new Lambda("Updating Velocity Adjuster")
+                .addExecute(() -> {
+                    switch (Globals.INSTANCE.getRobotState()) {
+                        case IDLE:
+                            if (FeatureRegistrar.getActiveOpMode().gamepad1.right_trigger > 0.5) {
+                                INSTANCE.velocityAdjuster = 0.7;
+                            } else {
+                                INSTANCE.velocityAdjuster = 1.0;
+                            }
+                            break;
+                        case DEPOSIT:
+                            if (FeatureRegistrar.getActiveOpMode().gamepad1.right_trigger > 0.5) {
+                                INSTANCE.velocityAdjuster = 0.7;
+                            } else {
+                                INSTANCE.velocityAdjuster = 0.8;
+                            }
+                            break;
+                        default:
+                            if (FeatureRegistrar.getActiveOpMode().gamepad1.right_trigger > 0.5) {
+                                INSTANCE.velocityAdjuster = 0.7;
+                            } else {
+                                INSTANCE.velocityAdjuster = 0.5;
+                            }
+                    }
+                });
     }
 
     @Retention(RetentionPolicy.RUNTIME)
