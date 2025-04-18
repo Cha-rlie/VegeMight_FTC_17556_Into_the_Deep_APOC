@@ -59,6 +59,8 @@ public class Wrist extends SDKSubsystem {
                         case GRAB:
                             wristServo.get().setPosition(0.21);
                             break;
+                        case NULL:
+                            break;
                         default:
                             wristServo.get().setPosition(0.12);
                             break;
@@ -82,6 +84,14 @@ public class Wrist extends SDKSubsystem {
         return new Lambda("Wrist Specimen")
                 .addExecute(()->{
                    wristServo.get().setPosition(0.79);
+                });
+    }
+
+    @NonNull
+    public Lambda specimenDepositSequence(){
+        return new Lambda("Wrist Specimen")
+                .addExecute(()->{
+                   wristServo.get().setPosition(0.9);
                 });
     }
 

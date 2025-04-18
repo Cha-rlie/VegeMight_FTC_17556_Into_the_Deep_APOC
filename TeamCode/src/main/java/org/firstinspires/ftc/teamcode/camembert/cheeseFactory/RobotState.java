@@ -14,5 +14,8 @@ public enum RobotState {
 
     //Park
     PARKASCENT,
-    PARKNOASCENT
+    PARKNOASCENT,
+
+    //Null
+    NULL
 }

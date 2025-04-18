@@ -76,6 +76,8 @@ public class Arm extends SDKSubsystem {
                     leftArm.get().setPosition(0);
                     rightArm.get().setPosition(0);
                     break;
+                case NULL:
+                    break;
                 default:
                     break;
             }

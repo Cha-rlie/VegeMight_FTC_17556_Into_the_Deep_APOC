@@ -4,7 +4,9 @@ import androidx.annotation.NonNull;
 
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.dairyFarm.subsytems.Lift;
 import org.firstinspires.ftc.teamcode.dairyFarm.subsytems.SampleManipulator;
+import org.firstinspires.ftc.teamcode.dairyFarm.subsytems.SpecimenManipulator;
 import org.firstinspires.ftc.teamcode.dairyFarm.subsytems.Wrist;
 
 import java.lang.annotation.ElementType;
@@ -138,6 +140,8 @@ public class Globals extends SDKSubsystem {
                     } else if (robotState.get() == RobotState.HOVERBEFOREGRAB) {
                         robotState.accept(RobotState.GRAB);
                     } else if (robotState.get() == RobotState.INTAKESPECIMEN) {
+                        robotState.accept(RobotState.NULL);
+                        new Wait(0.01);
                         new Sequential(
                             //Sequence of Commands - close claw, move wrist, then go to idle
                                 SampleManipulator.INSTANCE.intakeSpecimenSequence().then(
@@ -147,20 +151,27 @@ public class Globals extends SDKSubsystem {
                                                 )
                                         )
                                 )
-
                         );
                         new Wait(0.01);
                         robotState.accept(RobotState.IDLE);
                     } else if (robotState.get() == RobotState.DEPOSITSPECIMEN) {
                         //Another Sequence of commands
+                        robotState.accept(RobotState.NULL);
+                        new Wait(0.01);
                         new Sequential(
+                                Lift.INSTANCE.specimenDepositSequence().then(
+                                        new Wait(0.35).then(
+                                                SampleManipulator.INSTANCE.toggleClaw().then(
+                                                        new Wait(0.3).then(
 
+                                                        )
+                                                )
+                                        )
+                                )
                         );
-                        //Lower lift to 600
-                        //Wait 350
-                        //open claw
-                        //Wait 300
-                        //Wrist to 0.9
+                        new Wait(0.01);
+                        robotState.accept(RobotState.IDLE);
+
                     }
                 });
     }
