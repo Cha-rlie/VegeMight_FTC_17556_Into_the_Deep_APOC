@@ -34,7 +34,6 @@ public class Wrist extends SDKSubsystem {
     public void preUserInitHook(@NonNull Wrapper opMode) {
         // Init sequence
         getTelemetry().addLine("Wrist Initalising");
-        getTelemetry().update();
 
         setDefaultCommand(turnWrist());
     }
@@ -44,7 +43,7 @@ public class Wrist extends SDKSubsystem {
         return new Lambda("turnwrist")
                 .addRequirements(INSTANCE)
                 .addExecute(()-> {
-                    switch (Globals.getCurrentInstance().getCurrentRobotState()) {
+                    switch (Globals.INSTANCE.getRobotState()) {
                         case IDLE:
                             wristServo.get().setPosition(0.12);
                             break;
@@ -95,7 +94,7 @@ public class Wrist extends SDKSubsystem {
 
     public @interface Attach{}
 
-    private Dependency<?> dependency = Subsystem.DEFAULT_DEPENDENCY.and(new SingleAnnotations<>(Drivetrain.Attach.class));
+    private Dependency<?> dependency = Subsystem.DEFAULT_DEPENDENCY.and(new SingleAnnotations<>(Wrist.Attach.class));
 
     @NonNull
     @Override

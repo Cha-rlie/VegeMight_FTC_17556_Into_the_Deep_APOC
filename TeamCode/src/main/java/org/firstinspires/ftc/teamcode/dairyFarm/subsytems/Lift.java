@@ -2,13 +2,11 @@ package org.firstinspires.ftc.teamcode.dairyFarm.subsytems;
 
 import androidx.annotation.NonNull;
 
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.camembert.cheeseFactory.Globals;
-import org.firstinspires.ftc.teamcode.camembert.driveStuff.MecanumDriveCalculator;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
@@ -16,8 +14,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import dev.frozenmilk.mercurial.Mercurial;
-import dev.frozenmilk.dairy.core.FeatureRegistrar;
 import dev.frozenmilk.dairy.core.dependency.Dependency;
 import dev.frozenmilk.dairy.core.dependency.annotation.SingleAnnotations;
 import dev.frozenmilk.dairy.core.wrapper.Wrapper;
@@ -34,8 +30,8 @@ public class Lift extends SDKSubsystem {
 
     // Declare the motors and mecanum drive
     // @charlie please check motor names
-    private final Cell<CachingDcMotor> motorLiftL = subsystemCell(() -> new CachingDcMotor(getHardwareMap().get(DcMotorEx.class, "LeftSpool")));
-    private final Cell<CachingDcMotor> motorLiftR = subsystemCell(() -> new CachingDcMotor(getHardwareMap().get(DcMotorEx.class, "RightSpool")));
+    private final Cell<CachingDcMotor> motorLiftL = subsystemCell(() -> new CachingDcMotor(getHardwareMap().get(DcMotorEx.class, "leftSpool")));
+    private final Cell<CachingDcMotor> motorLiftR = subsystemCell(() -> new CachingDcMotor(getHardwareMap().get(DcMotorEx.class, "rightSpool")));
 
     private Lift() {
     }
@@ -44,7 +40,6 @@ public class Lift extends SDKSubsystem {
     public void preUserInitHook(@NonNull Wrapper opMode) {
         // Init sequence
         getTelemetry().addLine("Slides Initalising");
-        getTelemetry().update();
 
         motorLiftL.get().setDirection(DcMotorSimple.Direction.REVERSE);
         motorLiftR.get().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -72,7 +67,7 @@ public class Lift extends SDKSubsystem {
         return new Lambda("ChangePosition")
                 .addRequirements(INSTANCE)
                 .addExecute(() -> {
-                    switch (Globals.getCurrentInstance().getCurrentRobotState()) {
+                    switch (Globals.INSTANCE.getRobotState()) {
                         case IDLE:
                             motorLiftL.get().setTargetPosition(0);
                             motorLiftR.get().setTargetPosition(0);
@@ -97,7 +92,7 @@ public class Lift extends SDKSubsystem {
     @Inherited
     public @interface Attach{}
 
-    private Dependency<?> dependency = Subsystem.DEFAULT_DEPENDENCY.and(new SingleAnnotations<>(Drivetrain.Attach.class));
+    private Dependency<?> dependency = Subsystem.DEFAULT_DEPENDENCY.and(new SingleAnnotations<>(Lift.Attach.class));
 
     @NonNull
     @Override

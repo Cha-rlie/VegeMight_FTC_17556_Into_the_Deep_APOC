@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.robot.Robot;
 
+import org.firstinspires.ftc.teamcode.camembert.cheeseFactory.Globals;
 import org.firstinspires.ftc.teamcode.camembert.cheeseFactory.RobotState;
 import org.firstinspires.ftc.teamcode.dairyFarm.subsytems.Arm;
 import org.firstinspires.ftc.teamcode.dairyFarm.subsytems.Drivetrain;
@@ -26,6 +27,7 @@ import dev.frozenmilk.mercurial.commands.groups.Sequential;
 // Enables the scheduler
 @Mercurial.Attach
 // Add additional Subsystem attaches
+@Globals.Attach
 @Drivetrain.Attach
 @Flag.Attach
 @Lift.Attach
@@ -35,53 +37,11 @@ import dev.frozenmilk.mercurial.commands.groups.Sequential;
 //Attach Pitching Later
 
 public class TeleOpTest extends OpMode {
-
-    public OpModeLazyCell<RobotState> robotState = new OpModeLazyCell<>(() -> RobotState.IDLE);
     public RobotState currentRobotState = RobotState.IDLE;
-
-    public RobotState getCurrentRobotState() {
-        return robotState.get();
-    }
-
-    @NonNull
-    public Lambda backwardsRobotState() {
-        return new Lambda("One Stage Forwards")
-                .addExecute(() -> {
-                   if (robotState.get() == RobotState.IDLE) {
-                       robotState.accept(RobotState.HOVERBEFOREGRAB);
-                   } else if (robotState.get() == RobotState.DEPOSIT) {
-                       robotState.accept(RobotState.IDLE);
-                   } else if (robotState.get() == RobotState.HOVERAFTERGRAB) {
-                       robotState.accept(RobotState.GRAB);
-                   } else if (robotState.get() == RobotState.GRAB) {
-                       robotState.accept(RobotState.HOVERBEFOREGRAB);
-                   } else if (robotState.get() == RobotState.HOVERBEFOREGRAB) {
-                       robotState.accept(RobotState.IDLE);
-                   }
-                });
-    }
-
-    @NonNull
-    public Lambda forwardsRobotState() {
-        return new Lambda("One Stage Backwards")
-                .addExecute(() -> {
-                    if (robotState.get() == RobotState.IDLE) {
-                        robotState.accept(RobotState.DEPOSIT);
-                    } else if (robotState.get() == RobotState.DEPOSIT) {
-                        robotState.accept(RobotState.IDLE);
-                    } else if (robotState.get() == RobotState.HOVERAFTERGRAB) {
-                        robotState.accept(RobotState.IDLE);
-                    } else if (robotState.get() == RobotState.GRAB) {
-                        robotState.accept(RobotState.HOVERAFTERGRAB);
-                    } else if (robotState.get() == RobotState.HOVERBEFOREGRAB) {
-                        robotState.accept(RobotState.GRAB);
-                    }
-                });
-    }
 
     @Override
     public void init() {
-        robotState.accept(RobotState.IDLE);
+        Globals.INSTANCE.setRobotState(RobotState.IDLE);
         // Modify gamepads
 
         // Apply bindings
@@ -89,7 +49,7 @@ public class TeleOpTest extends OpMode {
         Mercurial.gamepad1().rightBumper().onTrue(
                 new Sequential(
                 //Update Status, then
-                forwardsRobotState(),
+                Globals.INSTANCE.forwardsRobotState(),
                 //Update Subsystems
                 new Parallel(
                     SampleManipulator.INSTANCE.openCloseClaw(),
@@ -98,11 +58,10 @@ public class TeleOpTest extends OpMode {
                     Wrist.INSTANCE.turnWrist()
                 ))
         );
-
         Mercurial.gamepad1().leftBumper().onTrue(
                 new Sequential(
                 //Update subsystems
-                backwardsRobotState(),
+                Globals.INSTANCE.backwardsRobotState(),
                 new Parallel(
                         SampleManipulator.INSTANCE.openCloseClaw(),
                         Arm.INSTANCE.turnArm(),

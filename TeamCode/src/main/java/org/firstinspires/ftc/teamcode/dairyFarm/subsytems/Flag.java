@@ -17,7 +17,6 @@ import dev.frozenmilk.dairy.core.dependency.Dependency;
 import dev.frozenmilk.dairy.core.dependency.annotation.SingleAnnotations;
 import dev.frozenmilk.dairy.core.wrapper.Wrapper;
 import dev.frozenmilk.mercurial.commands.Lambda;
-import dev.frozenmilk.mercurial.commands.util.Wait;
 import dev.frozenmilk.mercurial.subsystems.SDKSubsystem;
 import dev.frozenmilk.mercurial.subsystems.Subsystem;
 import dev.frozenmilk.util.cell.Cell;
@@ -35,7 +34,6 @@ public class Flag extends SDKSubsystem {
     public void preUserInitHook(@NonNull Wrapper opMode) {
         // Init sequence
         getTelemetry().addLine("Flag Initalising");
-        getTelemetry().update();
 
         setDefaultCommand(revealFlag());
     }
@@ -45,7 +43,7 @@ public class Flag extends SDKSubsystem {
         return new Lambda ("Flag turning")
                 .addRequirements(INSTANCE)
                 .addExecute(() -> {
-                    switch (Globals.getCurrentInstance().getCurrentRobotState()) {
+                    switch (Globals.INSTANCE.getRobotState()) {
                         case PARKNOASCENT:
                             flagServo.get().setPosition(1);
                             break;
@@ -66,7 +64,7 @@ public class Flag extends SDKSubsystem {
     @Inherited
     public @interface Attach{}
 
-    private Dependency<?> dependency = Subsystem.DEFAULT_DEPENDENCY.and(new SingleAnnotations<>(Drivetrain.Attach.class));
+    private Dependency<?> dependency = Subsystem.DEFAULT_DEPENDENCY.and(new SingleAnnotations<>(Flag.Attach.class));
 
     @NonNull
     @Override

@@ -13,7 +13,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import dev.frozenmilk.dairy.cachinghardware.CachingDcMotor;
 import dev.frozenmilk.dairy.cachinghardware.CachingDcMotorEx;
 import dev.frozenmilk.dairy.core.dependency.Dependency;
 import dev.frozenmilk.dairy.core.dependency.annotation.SingleAnnotations;
@@ -37,7 +36,6 @@ public class Pitching extends SDKSubsystem {
     @Override
     public void preUserInitHook(@NonNull Wrapper opMode) {
         getTelemetry().addLine("Pitching Initalising");
-        getTelemetry().update();
 
         setDefaultCommand(turnPitching());
     }
@@ -47,7 +45,7 @@ public class Pitching extends SDKSubsystem {
         return new Lambda("Pitching")
                 .addRequirements(INSTANCE)
                 .addExecute(()-> {
-                    switch (Globals.getCurrentInstance().getCurrentRobotState()) {
+                    switch (Globals.INSTANCE.getRobotState()) {
                         case IDLE:
                             pitchingMotor.get().setTargetPosition(1000 /* change */);
                             break;
@@ -88,7 +86,7 @@ public class Pitching extends SDKSubsystem {
     @Inherited
     public @interface Attach{}
 
-    private Dependency<?> dependency = Subsystem.DEFAULT_DEPENDENCY.and(new SingleAnnotations<>(Drivetrain.Attach.class));
+    private Dependency<?> dependency = Subsystem.DEFAULT_DEPENDENCY.and(new SingleAnnotations<>(Pitching.Attach.class));
 
     @NonNull
     @Override

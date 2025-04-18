@@ -2,10 +2,7 @@ package org.firstinspires.ftc.teamcode.camembert.cheeseFactory;
 
 import androidx.annotation.NonNull;
 
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.robot.Robot;
-
-import org.firstinspires.ftc.teamcode.camembert.driveStuff.MecanumDriveCalculator;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
@@ -13,22 +10,21 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import dev.frozenmilk.dairy.core.FeatureRegistrar;
 import dev.frozenmilk.dairy.core.dependency.Dependency;
 import dev.frozenmilk.dairy.core.dependency.annotation.SingleAnnotations;
+import dev.frozenmilk.dairy.core.util.OpModeLazyCell;
 import dev.frozenmilk.dairy.core.wrapper.Wrapper;
 import dev.frozenmilk.mercurial.commands.Lambda;
+import dev.frozenmilk.mercurial.subsystems.SDKSubsystem;
 import dev.frozenmilk.mercurial.subsystems.Subsystem;
-import dev.frozenmilk.mercurial.subsystems.SubsystemObjectCell;
 import kotlin.annotation.MustBeDocumented;
 
-public class Globals implements Subsystem {
+public class Globals extends SDKSubsystem {
 
     public static final Globals INSTANCE = new Globals();
 
     // Declare the global variables
-    RobotState currentRobotState;
-
+    public OpModeLazyCell<RobotState> robotState = new OpModeLazyCell<>(() -> RobotState.IDLE);
 
     public static double WRIST_IDLE = 0.12; //0.36;
     public static double WRIST_PICKUP = 0.21;
@@ -62,7 +58,58 @@ public class Globals implements Subsystem {
 
     // Constructor that builds the drivetrain subsystem class
     public Globals() {
-        currentRobotState = RobotState.IDLE;
+        robotState.accept(RobotState.IDLE);
+    }
+
+    public static RobotState getRobotState() {
+        return INSTANCE.robotState.get();
+    }
+
+    @NonNull
+    public Lambda setRobotState(RobotState newRobotState) {
+        return new Lambda("Setting Robot State")
+                .addExecute(() -> INSTANCE.robotState.accept(newRobotState));
+    }
+
+    @NonNull
+    public Lambda backwardsRobotState() {
+        return new Lambda("One Stage Forwards")
+                .addExecute(() -> {
+                    if (robotState.get() == RobotState.IDLE) {
+                        robotState.accept(RobotState.HOVERBEFOREGRAB);
+                    } else if (robotState.get() == RobotState.DEPOSIT) {
+                        robotState.accept(RobotState.IDLE);
+                    } else if (robotState.get() == RobotState.HOVERAFTERGRAB) {
+                        robotState.accept(RobotState.GRAB);
+                    } else if (robotState.get() == RobotState.GRAB) {
+                        robotState.accept(RobotState.HOVERBEFOREGRAB);
+                    } else if (robotState.get() == RobotState.HOVERBEFOREGRAB) {
+                        robotState.accept(RobotState.IDLE);
+                    }
+                });
+    }
+
+    @NonNull
+    public Lambda forwardsRobotState() {
+        return new Lambda("One Stage Backwards")
+                .addExecute(() -> {
+                    if (robotState.get() == RobotState.IDLE) {
+                        robotState.accept(RobotState.DEPOSIT);
+                    } else if (robotState.get() == RobotState.DEPOSIT) {
+                        robotState.accept(RobotState.IDLE);
+                    } else if (robotState.get() == RobotState.HOVERAFTERGRAB) {
+                        robotState.accept(RobotState.IDLE);
+                    } else if (robotState.get() == RobotState.GRAB) {
+                        robotState.accept(RobotState.HOVERAFTERGRAB);
+                    } else if (robotState.get() == RobotState.HOVERBEFOREGRAB) {
+                        robotState.accept(RobotState.GRAB);
+                    }
+                });
+    }
+
+    @Override
+    public void preUserLoopHook(@NonNull Wrapper opMode) {
+        getTelemetry().addData("Robot State", INSTANCE.robotState.get());
     }
 
     @Retention(RetentionPolicy.RUNTIME)
@@ -70,14 +117,6 @@ public class Globals implements Subsystem {
     @MustBeDocumented
     @Inherited
     public @interface Attach{}
-
-    public static Globals getCurrentInstance() {
-        return INSTANCE;
-    }
-
-    public static RobotState getCurrentRobotState() {
-        return INSTANCE.currentRobotState;
-    }
 
     private Dependency<?> dependency = Subsystem.DEFAULT_DEPENDENCY.and(new SingleAnnotations<>(Attach.class));
 

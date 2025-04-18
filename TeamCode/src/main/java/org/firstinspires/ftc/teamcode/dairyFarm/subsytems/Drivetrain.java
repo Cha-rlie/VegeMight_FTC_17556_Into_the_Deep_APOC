@@ -50,8 +50,6 @@ public class Drivetrain extends SDKSubsystem {
     @Override
     public void preUserInitHook(@NonNull Wrapper opMode) {
         // Init sequence
-        getTelemetry().addLine("Drivetrain Initalising");
-        getTelemetry().update();
 
         motorFR.get().setDirection(DcMotorSimple.Direction.REVERSE);
         motorBR.get().setDirection(DcMotorSimple.Direction.REVERSE);
@@ -64,12 +62,13 @@ public class Drivetrain extends SDKSubsystem {
         stopAllMotors();
 
         setDefaultCommand(drive());
+        getTelemetry().addLine("Drivetrain Initalised");
+
     }
 
     @Override
     public void preUserLoopHook(@NonNull Wrapper opMode) {
-        getTelemetry().addLine("Drivetrain Initalised");
-        getTelemetry().update();
+        getTelemetry().addData("Drivetrain Velocity Adjuster", velocityAdjuster);
     }
 
     @NonNull
@@ -101,8 +100,8 @@ public class Drivetrain extends SDKSubsystem {
         return INSTANCE.velocityAdjuster;
     }
 
-    public static void updateVelocityAdjuster(float newAdjustor) {
-        switch (Globals.getCurrentInstance().getCurrentRobotState()) {
+    public static void updateVelocityAdjuster() {
+        switch (Globals.INSTANCE.getRobotState()) {
             case IDLE:
                 if (FeatureRegistrar.getActiveOpMode().gamepad1.right_trigger > 0.5) {
                     INSTANCE.velocityAdjuster = 0.7;

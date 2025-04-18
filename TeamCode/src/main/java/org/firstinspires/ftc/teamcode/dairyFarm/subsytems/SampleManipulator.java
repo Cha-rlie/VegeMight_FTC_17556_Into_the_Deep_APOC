@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.dairyFarm.subsytems;
 
 import androidx.annotation.NonNull;
 
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.camembert.cheeseFactory.Globals;
@@ -13,13 +12,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import dev.frozenmilk.dairy.cachinghardware.CachingCRServo;
-import dev.frozenmilk.dairy.cachinghardware.CachingDcMotor;
 import dev.frozenmilk.dairy.cachinghardware.CachingServo;
 import dev.frozenmilk.dairy.core.dependency.Dependency;
 import dev.frozenmilk.dairy.core.dependency.annotation.SingleAnnotations;
 import dev.frozenmilk.dairy.core.wrapper.Wrapper;
-import dev.frozenmilk.mercurial.Mercurial;
 import dev.frozenmilk.mercurial.commands.Lambda;
 import dev.frozenmilk.mercurial.subsystems.SDKSubsystem;
 import dev.frozenmilk.mercurial.subsystems.Subsystem;
@@ -30,7 +26,7 @@ public class SampleManipulator extends SDKSubsystem {
 
     public static final SampleManipulator INSTANCE = new SampleManipulator();
     public boolean clawOpen = false;
-    private final Cell<CachingServo> clawServo = subsystemCell(() -> new CachingServo(getHardwareMap().get(Servo.class, "frontL")));
+    private final Cell<CachingServo> clawServo = subsystemCell(() -> new CachingServo(getHardwareMap().get(Servo.class, "sampleManipulator")));
     //Use CRServo for Hybrid
     //private final Cell<CachingCRServo> clawServo = subsystemCell(() -> new CachingCRServo(getHardwareMap().get(CRServo.class, "frontL")));
     //For old bot sample and specimen manip is the same
@@ -42,7 +38,6 @@ public class SampleManipulator extends SDKSubsystem {
     public void preUserInitHook(@NonNull Wrapper opMode) {
         // Init sequence
         getTelemetry().addLine("Claw Initalising");
-        getTelemetry().update();
 
         setDefaultCommand(openCloseClaw());
 
@@ -53,7 +48,7 @@ public class SampleManipulator extends SDKSubsystem {
         return new Lambda("Claw")
                 .addRequirements(INSTANCE)
                 .addExecute(()-> {
-                    switch (Globals.getCurrentInstance().getCurrentRobotState()) {
+                    switch (Globals.INSTANCE.getRobotState()) {
                         case IDLE:
                             clawOpen = true;
                             break;
@@ -100,7 +95,7 @@ public class SampleManipulator extends SDKSubsystem {
 
     public @interface Attach{}
 
-    private Dependency<?> dependency = Subsystem.DEFAULT_DEPENDENCY.and(new SingleAnnotations<>(Drivetrain.Attach.class));
+    private Dependency<?> dependency = Subsystem.DEFAULT_DEPENDENCY.and(new SingleAnnotations<>(SampleManipulator.Attach.class));
 
     @NonNull
     @Override
