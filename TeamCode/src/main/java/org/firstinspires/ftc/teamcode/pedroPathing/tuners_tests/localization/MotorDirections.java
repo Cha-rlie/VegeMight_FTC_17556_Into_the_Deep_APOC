@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.pedro.PedroPathing.localization;
+package org.firstinspires.ftc.teamcode.pedroPathing.tuners_tests.localization;
 
 import static com.pedropathing.follower.FollowerConstants.leftFrontMotorDirection;
 import static com.pedropathing.follower.FollowerConstants.leftFrontMotorName;
@@ -23,8 +23,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import java.util.Arrays;
 import java.util.List;
 
-import org.firstinspires.ftc.teamcode.pedro.PedroPathing.constants.FConstants;
-import org.firstinspires.ftc.teamcode.pedro.PedroPathing.constants.LConstants;
+import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstants;
+import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
 
 @TeleOp(name = "Motor Directions", group = "Teleop Test")
 public class MotorDirections extends OpMode {
@@ -76,15 +76,23 @@ public class MotorDirections extends OpMode {
 
         if(gamepad1.a)
             leftFront.setPower(1);
+        else
+            leftFront.setPower(0);
 
         if(gamepad1.y)
             leftRear.setPower(1);
+        else
+            leftRear.setPower(0);
 
         if(gamepad1.b)
             rightFront.setPower(1);
+        else
+            rightFront.setPower(0);
 
         if(gamepad1.x)
             rightRear.setPower(1);
+        else
+            rightRear.setPower(0);
 
         telemetryA.addLine("Press A to spin the left front motor at 100% power");
         telemetryA.addLine("Press Y to spin the left rear motor at 100% power");

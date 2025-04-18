@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.pedro.PedroPathing.pid;
+package org.firstinspires.ftc.teamcode.pedroPathing.tuners_tests.pid;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -13,8 +13,8 @@ import com.pedropathing.pathgen.BezierCurve;
 import com.pedropathing.pathgen.Path;
 import com.pedropathing.pathgen.Point;
 
-import org.firstinspires.ftc.teamcode.pedro.PedroPathing.constants.FConstants;
-import org.firstinspires.ftc.teamcode.pedro.PedroPathing.constants.LConstants;
+import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstants;
+import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
 
 /**
  * This is the CurvedBackAndForth autonomous OpMode. It runs the robot in a specified distance
@@ -49,8 +49,7 @@ public class CurvedBackAndForth extends OpMode {
      */
     @Override
     public void init() {
-        Constants.setConstants(FConstants.class, LConstants.class);
-        follower = new Follower(hardwareMap);
+        follower = new Follower(hardwareMap, FConstants.class, LConstants.class);
 
         forwards = new Path(new BezierCurve(new Point(0,0, Point.CARTESIAN), new Point(Math.abs(DISTANCE),0, Point.CARTESIAN), new Point(Math.abs(DISTANCE),DISTANCE, Point.CARTESIAN)));
         backwards = new Path(new BezierCurve(new Point(Math.abs(DISTANCE),DISTANCE, Point.CARTESIAN), new Point(Math.abs(DISTANCE),0, Point.CARTESIAN), new Point(0,0, Point.CARTESIAN)));

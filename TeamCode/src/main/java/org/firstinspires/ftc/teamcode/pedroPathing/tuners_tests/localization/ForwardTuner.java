@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.pedro.PedroPathing.localization;
+package org.firstinspires.ftc.teamcode.pedroPathing.tuners_tests.localization;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -12,8 +12,8 @@ import com.pedropathing.localization.PoseUpdater;
 import com.pedropathing.util.DashboardPoseTracker;
 import com.pedropathing.util.Drawing;
 
-import org.firstinspires.ftc.teamcode.pedro.PedroPathing.constants.FConstants;
-import org.firstinspires.ftc.teamcode.pedro.PedroPathing.constants.LConstants;
+import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstants;
+import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
 
 /**
  * This is the ForwardTuner OpMode. This tracks the forward movement of the robot and displays the
@@ -43,8 +43,7 @@ public class ForwardTuner extends OpMode {
      */
     @Override
     public void init() {
-        Constants.setConstants(FConstants.class, LConstants.class);
-        poseUpdater = new PoseUpdater(hardwareMap);
+        poseUpdater = new PoseUpdater(hardwareMap, FConstants.class, LConstants.class);
 
         dashboardPoseTracker = new DashboardPoseTracker(poseUpdater);
 

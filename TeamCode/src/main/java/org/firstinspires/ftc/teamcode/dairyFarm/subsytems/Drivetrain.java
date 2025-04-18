@@ -2,10 +2,12 @@ package org.firstinspires.ftc.teamcode.dairyFarm.subsytems;
 
 import androidx.annotation.NonNull;
 
+import com.pedropathing.follower.Follower;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+import org.firstinspires.ftc.robotcore.internal.opmode.OpModeMeta;
 import org.firstinspires.ftc.teamcode.camembert.cheeseFactory.Globals;
 import org.firstinspires.ftc.teamcode.camembert.driveStuff.MecanumDriveCalculator;
 
@@ -40,6 +42,9 @@ public class Drivetrain extends SDKSubsystem {
 
     private static double velocityAdjuster;
 
+    // For AUTO only
+    private static Follower follower;
+
     // Constructor that builds the drivetrain subsystem class
     private Drivetrain() {
     }
@@ -61,6 +66,11 @@ public class Drivetrain extends SDKSubsystem {
 
         velocityAdjuster = 1;
         stopAllMotors();
+
+        // For AUTO
+        //follower = new Follower(FeatureRegistrar.getActiveOpMode().hardwareMap);
+
+        //if (FeatureRegistrar.getActiveOpModeWrapper().getOpModeType() == OpModeMeta.Flavor.AUTONOMOUS)
 
         setDefaultCommand(new Parallel(drive(), updateVelocityAdjuster()));
         getTelemetry().addLine("Drivetrain Initialised");

@@ -6,6 +6,13 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.robot.Robot;
 
+import dev.frozenmilk.dairy.core.util.OpModeLazyCell;
+import dev.frozenmilk.mercurial.Mercurial;
+import dev.frozenmilk.mercurial.commands.Command;
+import dev.frozenmilk.mercurial.commands.Lambda;
+import dev.frozenmilk.mercurial.commands.groups.Parallel;
+import dev.frozenmilk.mercurial.commands.groups.Sequential;
+
 import org.firstinspires.ftc.teamcode.camembert.cheeseFactory.Globals;
 import org.firstinspires.ftc.teamcode.camembert.cheeseFactory.RobotState;
 import org.firstinspires.ftc.teamcode.dairyFarm.subsytems.Arm;
@@ -14,13 +21,6 @@ import org.firstinspires.ftc.teamcode.dairyFarm.subsytems.Flag;
 import org.firstinspires.ftc.teamcode.dairyFarm.subsytems.Lift;
 import org.firstinspires.ftc.teamcode.dairyFarm.subsytems.SampleManipulator;
 import org.firstinspires.ftc.teamcode.dairyFarm.subsytems.Wrist;
-
-import dev.frozenmilk.dairy.core.util.OpModeLazyCell;
-import dev.frozenmilk.mercurial.Mercurial;
-import dev.frozenmilk.mercurial.commands.Command;
-import dev.frozenmilk.mercurial.commands.Lambda;
-import dev.frozenmilk.mercurial.commands.groups.Parallel;
-import dev.frozenmilk.mercurial.commands.groups.Sequential;
 
 // Sets this class as a TeleOp
 @TeleOp(name="NormalTeleOp")
