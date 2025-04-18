@@ -78,6 +78,14 @@ public class Wrist extends SDKSubsystem {
     }
 
     @NonNull
+    public Lambda intakeSpecimenSequence(){
+        return new Lambda("Wrist Specimen")
+                .addExecute(()->{
+                   wristServo.get().setPosition(0.79);
+                });
+    }
+
+    @NonNull
     public Lambda adjustWristDown() {
         return new Lambda("adjust wrist")
                 .addExecute(()-> {

@@ -64,15 +64,32 @@ public class TeleOpTest extends OpMode {
                 Globals.INSTANCE.backwardsRobotState(),
                 new Parallel(
                         SampleManipulator.INSTANCE.openCloseClaw(),
+                        SampleManipulator.INSTANCE.resetClawRotAutomatically(),
                         Arm.INSTANCE.turnArm(),
                         Lift.INSTANCE.goToPosition(),
                         Wrist.INSTANCE.turnWrist()
                 ))
         );
 
+        Mercurial.gamepad1().circle().onTrue(
+          SampleManipulator.INSTANCE.rotateClawForwards()
+        );
+
+        Mercurial.gamepad1().square().onTrue(
+          SampleManipulator.INSTANCE.rotateClawBackwards()
+        );
+
         Mercurial.gamepad1().options().onTrue(
                 SampleManipulator.INSTANCE.toggleClaw()
         );
+
+        Mercurial.gamepad1().dpadLeft().onTrue(
+                new Parallel(
+                        Globals.INSTANCE.goToIdle(),
+                        Globals.INSTANCE.changeState()
+                ));
+
+
 
         Mercurial.gamepad2().dpadDown().onTrue(
                 Wrist.INSTANCE.adjustWristDown()
