@@ -4,6 +4,11 @@ import androidx.annotation.NonNull;
 
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.dairyFarm.subsytems.Lift;
+import org.firstinspires.ftc.teamcode.dairyFarm.subsytems.SampleManipulator;
+import org.firstinspires.ftc.teamcode.dairyFarm.subsytems.SpecimenManipulator;
+import org.firstinspires.ftc.teamcode.dairyFarm.subsytems.Wrist;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
@@ -14,7 +19,10 @@ import dev.frozenmilk.dairy.core.dependency.Dependency;
 import dev.frozenmilk.dairy.core.dependency.annotation.SingleAnnotations;
 import dev.frozenmilk.dairy.core.util.OpModeLazyCell;
 import dev.frozenmilk.dairy.core.wrapper.Wrapper;
+import dev.frozenmilk.mercurial.commands.Command;
 import dev.frozenmilk.mercurial.commands.Lambda;
+import dev.frozenmilk.mercurial.commands.groups.Sequential;
+import dev.frozenmilk.mercurial.commands.util.Wait;
 import dev.frozenmilk.mercurial.subsystems.SDKSubsystem;
 import dev.frozenmilk.mercurial.subsystems.Subsystem;
 import kotlin.annotation.MustBeDocumented;
@@ -22,6 +30,7 @@ import kotlin.annotation.MustBeDocumented;
 public class Globals extends SDKSubsystem {
 
     public static final Globals INSTANCE = new Globals();
+    public static boolean isSampleModeTrue = true;
 
     // Declare the global variables
     public OpModeLazyCell<RobotState> robotState = new OpModeLazyCell<>(() -> RobotState.IDLE);
@@ -73,10 +82,14 @@ public class Globals extends SDKSubsystem {
 
     @NonNull
     public Lambda backwardsRobotState() {
-        return new Lambda("One Stage Forwards")
+        return new Lambda("One Stage Backwards")
                 .addExecute(() -> {
                     if (robotState.get() == RobotState.IDLE) {
-                        robotState.accept(RobotState.HOVERBEFOREGRAB);
+                        if (isSampleModeTrue) {
+                            robotState.accept(RobotState.HOVERBEFOREGRAB);
+                        } else if (!isSampleModeTrue) {
+                            robotState.accept(RobotState.INTAKESPECIMEN);
+                        }
                     } else if (robotState.get() == RobotState.DEPOSIT) {
                         robotState.accept(RobotState.IDLE);
                     } else if (robotState.get() == RobotState.HOVERAFTERGRAB) {
@@ -85,16 +98,39 @@ public class Globals extends SDKSubsystem {
                         robotState.accept(RobotState.HOVERBEFOREGRAB);
                     } else if (robotState.get() == RobotState.HOVERBEFOREGRAB) {
                         robotState.accept(RobotState.IDLE);
+                    } else if (robotState.get() == RobotState.INTAKESPECIMEN) {
+                        robotState.accept(RobotState.IDLE);
+                    } else if (robotState.get() == RobotState.IDLE); {
+                        robotState.accept(RobotState.IDLE);
                     }
                 });
     }
+    @NonNull
+    public Lambda goToIdle() {
+        return new Lambda("Go IDLE")
+                .addExecute(()-> {
+                   if (robotState.get() != RobotState.IDLE) {
+                       robotState.accept(RobotState.IDLE);
+                   }
+                });
+    }
 
+    public Lambda changeState(){
+        return new Lambda("Change States")
+                .addExecute(()-> {
+                   isSampleModeTrue = !isSampleModeTrue;
+                });
+    }
     @NonNull
     public Lambda forwardsRobotState() {
-        return new Lambda("One Stage Backwards")
+        return new Lambda("One Stage Forwards")
                 .addExecute(() -> {
                     if (robotState.get() == RobotState.IDLE) {
-                        robotState.accept(RobotState.DEPOSIT);
+                        if (isSampleModeTrue){
+                            robotState.accept(RobotState.DEPOSIT);
+                        } else if (!isSampleModeTrue){
+                            robotState.accept(RobotState.DEPOSITSPECIMEN);
+                        }
                     } else if (robotState.get() == RobotState.DEPOSIT) {
                         robotState.accept(RobotState.IDLE);
                     } else if (robotState.get() == RobotState.HOVERAFTERGRAB) {
@@ -103,6 +139,39 @@ public class Globals extends SDKSubsystem {
                         robotState.accept(RobotState.HOVERAFTERGRAB);
                     } else if (robotState.get() == RobotState.HOVERBEFOREGRAB) {
                         robotState.accept(RobotState.GRAB);
+                    } else if (robotState.get() == RobotState.INTAKESPECIMEN) {
+                        robotState.accept(RobotState.NULL);
+                        new Wait(0.01);
+                        new Sequential(
+                            //Sequence of Commands - close claw, move wrist, then go to idle
+                                SampleManipulator.INSTANCE.intakeSpecimenSequence().then(
+                                        new Wait(0.1).then(
+                                                Wrist.INSTANCE.intakeSpecimenSequence().then(
+                                                    new Wait(0.1)
+                                                )
+                                        )
+                                )
+                        );
+                        new Wait(0.01);
+                        robotState.accept(RobotState.IDLE);
+                    } else if (robotState.get() == RobotState.DEPOSITSPECIMEN) {
+                        //Another Sequence of commands
+                        robotState.accept(RobotState.NULL);
+                        new Wait(0.01);
+                        new Sequential(
+                                Lift.INSTANCE.specimenDepositSequence().then(
+                                        new Wait(0.35).then(
+                                                SampleManipulator.INSTANCE.toggleClaw().then(
+                                                        new Wait(0.3).then(
+
+                                                        )
+                                                )
+                                        )
+                                )
+                        );
+                        new Wait(0.01);
+                        robotState.accept(RobotState.IDLE);
+
                     }
                 });
     }

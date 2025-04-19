@@ -63,6 +63,17 @@ public class Lift extends SDKSubsystem {
     }
 
     @NonNull
+    public Lambda specimenDepositSequence() {
+        return new Lambda ("Spec Deposit Sequence List")
+                .addExecute(()->{
+                   motorLiftL.get().setTargetPosition(600);
+                   motorLiftR.get().setTargetPosition(600);
+                   motorLiftL.get().setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                   motorLiftR.get().setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                });
+    }
+
+    @NonNull
     public Lambda goToPosition() {
         return new Lambda("ChangePosition")
                 .addRequirements(INSTANCE)
@@ -75,6 +86,8 @@ public class Lift extends SDKSubsystem {
                         case DEPOSIT:
                             motorLiftL.get().setTargetPosition(1700);
                             motorLiftR.get().setTargetPosition(1700);
+                            break;
+                        case NULL:
                             break;
                         default:
                             motorLiftL.get().setTargetPosition(0);
