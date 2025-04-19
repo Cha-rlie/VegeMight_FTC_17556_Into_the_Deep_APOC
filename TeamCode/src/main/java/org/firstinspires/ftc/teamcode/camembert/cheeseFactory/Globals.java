@@ -33,7 +33,7 @@ public class Globals extends SDKSubsystem {
     public static boolean isSampleModeTrue = true;
 
     // Declare the global variables
-    public OpModeLazyCell<RobotState> robotState = new OpModeLazyCell<>(() -> RobotState.IDLE);
+    private OpModeLazyCell<RobotState> robotState = new OpModeLazyCell<>(() -> RobotState.IDLE);
 
     public static double WRIST_IDLE = 0.12; //0.36;
     public static double WRIST_PICKUP = 0.21;
@@ -87,6 +87,7 @@ public class Globals extends SDKSubsystem {
                     if (robotState.get() == RobotState.IDLE) {
                         if (isSampleModeTrue) {
                             robotState.accept(RobotState.HOVERBEFOREGRAB);
+                            getTelemetry().addLine("SHOULD BE HOVERBEFOREGRAB");
                         } else if (!isSampleModeTrue) {
                             robotState.accept(RobotState.INTAKESPECIMEN);
                         }
@@ -100,7 +101,7 @@ public class Globals extends SDKSubsystem {
                         robotState.accept(RobotState.IDLE);
                     } else if (robotState.get() == RobotState.INTAKESPECIMEN) {
                         robotState.accept(RobotState.IDLE);
-                    } else if (robotState.get() == RobotState.IDLE); {
+                    } else if (robotState.get() == RobotState.DEPOSITSPECIMEN) {
                         robotState.accept(RobotState.IDLE);
                     }
                 });
@@ -116,7 +117,7 @@ public class Globals extends SDKSubsystem {
     }
 
     public Lambda changeState(){
-        return new Lambda("Change States")
+        return new Lambda("Change Scoring States")
                 .addExecute(()-> {
                    isSampleModeTrue = !isSampleModeTrue;
                 });
@@ -179,6 +180,7 @@ public class Globals extends SDKSubsystem {
     @Override
     public void preUserLoopHook(@NonNull Wrapper opMode) {
         getTelemetry().addData("Robot State", INSTANCE.robotState.get());
+        getTelemetry().addData("isSampleTrue", isSampleModeTrue);
     }
 
     @Retention(RetentionPolicy.RUNTIME)

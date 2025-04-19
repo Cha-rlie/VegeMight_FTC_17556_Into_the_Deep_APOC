@@ -45,20 +45,36 @@ public class Lift extends SDKSubsystem {
         motorLiftR.get().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorLiftL.get().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        stopAllMotors();
+        initialiseLiftMotors();
         setDefaultCommand(goToPosition());
 
     }
 
+    @Override
+    public void preUserLoopHook(@NonNull Wrapper opMode) {
+        getTelemetry().addData("Left Motor Target Position", motorLiftL.get().getTargetPosition());
+    }
+
+    // TODO: FORCE IT DOWN TO START FROM CONSISTENT POSITION
     @NonNull
-    public Lambda stopAllMotors() {
+    public Lambda initialiseLiftMotors() {
         return new Lambda("Stop All Motors")
                 .addRequirements(INSTANCE)
                 .addExecute(() -> {
                     motorLiftL.get().setTargetPosition(0);
-                    motorLiftL.get().setTargetPosition(0);
+                    motorLiftR.get().setTargetPosition(0);
                     motorLiftL.get().setPower(1);
                     motorLiftR.get().setPower(1);
+                });
+    }
+
+    @NonNull
+    public Lambda emergencyStopAllMotors() {
+        return new Lambda("Stop All Motors")
+                .addRequirements(INSTANCE)
+                .addExecute(() -> {
+                    motorLiftL.get().setPower(0);
+                    motorLiftR.get().setPower(0);
                 });
     }
 
@@ -92,10 +108,19 @@ public class Lift extends SDKSubsystem {
                         default:
                             motorLiftL.get().setTargetPosition(0);
                             motorLiftR.get().setTargetPosition(0);
+                            break;
                     }
 
                     motorLiftL.get().setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     motorLiftR.get().setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    getTelemetry().addLine("AM I RUNNING TO TELEMETRY PLS");
+                    if (motorLiftL.get().getCurrentPosition() > motorLiftL.get().getTargetPosition() + 50 && motorLiftL.get().getCurrentPosition() < motorLiftL.get().getTargetPosition() - 100) {
+                        motorLiftL.get().setPower(0);
+                        motorLiftR.get().setPower(0);
+                    } else {
+                        motorLiftL.get().setPower(0.7);
+                        motorLiftR.get().setPower(0.7);
+                    }
                 });
     }
 

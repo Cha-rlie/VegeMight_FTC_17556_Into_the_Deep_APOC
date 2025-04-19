@@ -16,7 +16,7 @@ public class LConstants {
         ThreeWheelConstants.strafeEncoder_HardwareMapName = "backL";
         ThreeWheelConstants.leftEncoderDirection = Encoder.FORWARD;
         ThreeWheelConstants.rightEncoderDirection = Encoder.REVERSE;
-        ThreeWheelConstants.strafeEncoderDirection = Encoder.REVERSE;
+        ThreeWheelConstants.strafeEncoderDirection = Encoder.FORWARD ;
     }
 }
 

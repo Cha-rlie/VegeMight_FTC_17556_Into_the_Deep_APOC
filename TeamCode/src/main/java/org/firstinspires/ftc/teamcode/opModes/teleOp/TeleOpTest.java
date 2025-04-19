@@ -47,29 +47,12 @@ public class TeleOpTest extends OpMode {
         // Apply bindings
 
         Mercurial.gamepad1().rightBumper().onTrue(
-                new Sequential(
-                //Update Status, then
-                Globals.INSTANCE.forwardsRobotState(),
-                //Update Subsystems
-                new Parallel(
-                    SampleManipulator.INSTANCE.openCloseClaw(),
-                    Arm.INSTANCE.turnArm(),
-                    Lift.INSTANCE.goToPosition(),
-                    Wrist.INSTANCE.turnWrist()
-                ))
-        );
+                //Update Status
+                Globals.INSTANCE.forwardsRobotState());
+
         Mercurial.gamepad1().leftBumper().onTrue(
-                new Sequential(
-                //Update subsystems
-                Globals.INSTANCE.backwardsRobotState(),
-                new Parallel(
-                        SampleManipulator.INSTANCE.openCloseClaw(),
-                        SampleManipulator.INSTANCE.resetClawRotAutomatically(),
-                        Arm.INSTANCE.turnArm(),
-                        Lift.INSTANCE.goToPosition(),
-                        Wrist.INSTANCE.turnWrist()
-                ))
-        );
+                //Update status
+                Globals.INSTANCE.backwardsRobotState());
 
         Mercurial.gamepad1().circle().onTrue(
           SampleManipulator.INSTANCE.rotateClawForwards()
