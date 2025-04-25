@@ -141,36 +141,27 @@ public class Globals extends SDKSubsystem {
                     } else if (robotState.get() == RobotState.HOVERBEFOREGRAB) {
                         robotState.accept(RobotState.GRAB);
                     } else if (robotState.get() == RobotState.INTAKESPECIMEN) {
+
                         robotState.accept(RobotState.NULL);
-                        new Wait(0.01);
                         new Sequential(
-                            //Sequence of Commands - close claw, move wrist, then go to idle
-                                SampleManipulator.INSTANCE.intakeSpecimenSequence().then(
-                                        new Wait(0.1).then(
-                                                Wrist.INSTANCE.intakeSpecimenSequence().then(
-                                                    new Wait(0.1)
-                                                )
-                                        )
-                                )
+                        new Wait(0.01),
+                        SampleManipulator.INSTANCE.intakeSpecimenSequence(),
+                        new Wait(0.1),
+                        Wrist.INSTANCE.intakeSpecimenSequence(),
+                        new Wait(0.1)
                         );
-                        new Wait(0.01);
                         robotState.accept(RobotState.IDLE);
+
                     } else if (robotState.get() == RobotState.DEPOSITSPECIMEN) {
                         //Another Sequence of commands
                         robotState.accept(RobotState.NULL);
-                        new Wait(0.01);
                         new Sequential(
-                                Lift.INSTANCE.specimenDepositSequence().then(
-                                        new Wait(0.35).then(
-                                                SampleManipulator.INSTANCE.toggleClaw().then(
-                                                        new Wait(0.3).then(
-
-                                                        )
-                                                )
-                                        )
-                                )
+                        new Wait(0.01),
+                        Lift.INSTANCE.specimenDepositSequence(),
+                        new Wait(0.35),
+                        SampleManipulator.INSTANCE.toggleClaw(),
+                        new Wait(0.3)
                         );
-                        new Wait(0.01);
                         robotState.accept(RobotState.IDLE);
 
                     }
