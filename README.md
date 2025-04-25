@@ -26,6 +26,7 @@ If you have any questions, please contact us at vegemightrobotics@gmail.com, or 
 | Apr 17 | New robot subsystems are made, waiting for new robot to be made. Telemetry added for testing purposes |
 | Apr 18 | Hopefully can switch between different states now |
 | Apr 18 | Second updated on 18th - subsystems and everything actually works now. Added claw rotation and specimens mode. Working on Pedro Pathing Now.|
+| Apr 25 | Maybe the specimen subsystem will actually work this time round... |
 ## Autonomous
 ☢ This Autonomous is in Development ☢
 
