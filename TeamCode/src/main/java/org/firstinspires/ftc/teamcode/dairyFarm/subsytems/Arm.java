@@ -69,8 +69,8 @@ public class Arm extends SDKSubsystem {
                     rightArm.get().setPosition(0.5723);
                     break;
                 case INTAKESPECIMEN:
-                    leftArm.get().setPosition(0);
-                    rightArm.get().setPosition(0);
+                    leftArm.get().setPosition(0.4929);
+                    rightArm.get().setPosition(0.4929);
                     break;
                 case DEPOSITSPECIMEN:
                     leftArm.get().setPosition(0);

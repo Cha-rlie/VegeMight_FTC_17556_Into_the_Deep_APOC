@@ -21,6 +21,7 @@ import dev.frozenmilk.dairy.core.util.OpModeLazyCell;
 import dev.frozenmilk.dairy.core.wrapper.Wrapper;
 import dev.frozenmilk.mercurial.commands.Command;
 import dev.frozenmilk.mercurial.commands.Lambda;
+import dev.frozenmilk.mercurial.commands.groups.Parallel;
 import dev.frozenmilk.mercurial.commands.groups.Sequential;
 import dev.frozenmilk.mercurial.commands.util.Wait;
 import dev.frozenmilk.mercurial.subsystems.SDKSubsystem;
@@ -31,6 +32,7 @@ public class Globals extends SDKSubsystem {
 
     public static final Globals INSTANCE = new Globals();
     public static boolean isSampleModeTrue = true;
+    public static boolean updateRobotStateTrue = false;
 
     // Declare the global variables
     private OpModeLazyCell<RobotState> robotState = new OpModeLazyCell<>(() -> RobotState.IDLE);
@@ -84,6 +86,7 @@ public class Globals extends SDKSubsystem {
     public Lambda backwardsRobotState() {
         return new Lambda("One Stage Backwards")
                 .addExecute(() -> {
+                    updateRobotStateTrue = true;
                     if (robotState.get() == RobotState.IDLE) {
                         if (isSampleModeTrue) {
                             robotState.accept(RobotState.HOVERBEFOREGRAB);
@@ -93,6 +96,7 @@ public class Globals extends SDKSubsystem {
                         }
                     } else if (robotState.get() == RobotState.DEPOSIT) {
                         robotState.accept(RobotState.IDLE);
+                        updateRobotStateTrue=false;
                     } else if (robotState.get() == RobotState.HOVERAFTERGRAB) {
                         robotState.accept(RobotState.GRAB);
                     } else if (robotState.get() == RobotState.GRAB) {
@@ -104,6 +108,8 @@ public class Globals extends SDKSubsystem {
                     } else if (robotState.get() == RobotState.DEPOSITSPECIMEN) {
                         robotState.accept(RobotState.IDLE);
                     }
+                    new Wait(0.1);
+                    updateRobotStateTrue=false;
                 });
     }
     @NonNull
@@ -127,9 +133,9 @@ public class Globals extends SDKSubsystem {
         return new Lambda("One Stage Forwards")
                 .addExecute(() -> {
                     if (robotState.get() == RobotState.IDLE) {
-                        if (isSampleModeTrue){
+                        if (isSampleModeTrue) {
                             robotState.accept(RobotState.DEPOSIT);
-                        } else if (!isSampleModeTrue){
+                        } else if (!isSampleModeTrue) {
                             robotState.accept(RobotState.DEPOSITSPECIMEN);
                         }
                     } else if (robotState.get() == RobotState.DEPOSIT) {
@@ -142,25 +148,18 @@ public class Globals extends SDKSubsystem {
                         robotState.accept(RobotState.GRAB);
                     } else if (robotState.get() == RobotState.INTAKESPECIMEN) {
 
-                        robotState.accept(RobotState.NULL);
-                        new Sequential(
-                        new Wait(0.01),
-                        SampleManipulator.INSTANCE.intakeSpecimenSequence(),
-                        new Wait(0.1),
-                        Wrist.INSTANCE.intakeSpecimenSequence(),
-                        new Wait(0.1)
-                        );
+
                         robotState.accept(RobotState.IDLE);
 
                     } else if (robotState.get() == RobotState.DEPOSITSPECIMEN) {
                         //Another Sequence of commands
                         robotState.accept(RobotState.NULL);
                         new Sequential(
-                        new Wait(0.01),
-                        Lift.INSTANCE.specimenDepositSequence(),
-                        new Wait(0.35),
-                        SampleManipulator.INSTANCE.toggleClaw(),
-                        new Wait(0.3)
+                                new Wait(0.01),
+                                Lift.INSTANCE.specimenDepositSequence(),
+                                new Wait(0.35),
+                                SampleManipulator.INSTANCE.toggleClaw(),
+                                new Wait(0.3)
                         );
                         robotState.accept(RobotState.IDLE);
 

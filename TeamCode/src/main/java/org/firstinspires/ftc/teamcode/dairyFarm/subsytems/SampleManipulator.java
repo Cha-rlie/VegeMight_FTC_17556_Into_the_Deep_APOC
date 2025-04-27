@@ -109,6 +109,7 @@ public class SampleManipulator extends SDKSubsystem {
         return new Lambda("Claw")
                 .addRequirements(INSTANCE)
                 .addExecute(()-> {
+                    if (Globals.updateRobotStateTrue == true) {
                     switch (Globals.INSTANCE.getRobotState()) {
                         case IDLE:
                             clawOpen = true;
@@ -133,6 +134,7 @@ public class SampleManipulator extends SDKSubsystem {
                         clawServo.get().setPosition(0.36);
                         //Don't turn
                     }
+                }
                 });
     }
 
@@ -153,6 +155,13 @@ public class SampleManipulator extends SDKSubsystem {
                         clawOpen = false;
                     } else if (clawOpen == false) {
                         clawOpen = true;
+                    }
+                    if (clawOpen == true) {
+                        clawServo.get().setPosition(0.8);
+                        //Turn forever
+                    } else if (clawOpen != true) {
+                        clawServo.get().setPosition(0.36);
+                        //Don't turn
                     }
                     getTelemetry().addLine("Claw Toggled");
                     getTelemetry().update();

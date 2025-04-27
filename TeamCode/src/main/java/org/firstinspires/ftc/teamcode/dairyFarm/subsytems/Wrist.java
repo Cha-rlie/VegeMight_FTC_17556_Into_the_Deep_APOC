@@ -43,29 +43,34 @@ public class Wrist extends SDKSubsystem {
         return new Lambda("turnwrist")
                 .addRequirements(INSTANCE)
                 .addExecute(()-> {
-                    switch (Globals.INSTANCE.getRobotState()) {
-                        case IDLE:
-                            wristServo.get().setPosition(0.12);
-                            break;
-                        case DEPOSIT:
-                            wristServo.get().setPosition(0.51);
-                            break;
-                        case HOVERAFTERGRAB:
-                            wristServo.get().setPosition(0.21);
-                            break;
-                        case HOVERBEFOREGRAB:
-                            wristServo.get().setPosition(0.21);
-                            break;
-                        case GRAB:
-                            wristServo.get().setPosition(0.21);
-                            break;
-                        case NULL:
-                            break;
-                        default:
-                            wristServo.get().setPosition(0.12);
-                            break;
-                    }
-                }
+                            if (Globals.updateRobotStateTrue == true) {
+                                switch (Globals.INSTANCE.getRobotState()) {
+                                    case IDLE:
+                                        wristServo.get().setPosition(0.12);
+                                        break;
+                                    case DEPOSIT:
+                                        wristServo.get().setPosition(0.51);
+                                        break;
+                                    case HOVERAFTERGRAB:
+                                        wristServo.get().setPosition(0.21);
+                                        break;
+                                    case HOVERBEFOREGRAB:
+                                        wristServo.get().setPosition(0.21);
+                                        break;
+                                    case GRAB:
+                                        wristServo.get().setPosition(0.21);
+                                        break;
+                                    case INTAKESPECIMEN:
+                                        wristServo.get().setPosition(0.55);
+                                        break;
+                                    case NULL:
+                                        break;
+                                    default:
+                                        wristServo.get().setPosition(0.12);
+                                        break;
+                                }
+                            }
+                        }
                 );
     }
 
