@@ -12,11 +12,13 @@ import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.HashMap;
 
 import dev.frozenmilk.dairy.cachinghardware.CachingServo;
 import dev.frozenmilk.dairy.core.dependency.Dependency;
 import dev.frozenmilk.dairy.core.dependency.annotation.SingleAnnotations;
 import dev.frozenmilk.dairy.core.wrapper.Wrapper;
+import dev.frozenmilk.mercurial.commands.Command;
 import dev.frozenmilk.mercurial.commands.Lambda;
 import dev.frozenmilk.mercurial.commands.groups.Parallel;
 import dev.frozenmilk.mercurial.subsystems.SDKSubsystem;
@@ -27,15 +29,54 @@ import kotlin.annotation.MustBeDocumented;
 public class SampleManipulator extends SDKSubsystem {
 
     public static final SampleManipulator INSTANCE = new SampleManipulator();
-    public boolean clawOpen = false;
-    public double clawAdjustmentStage = 0;
+
     private final Cell<CachingServo> clawServo = subsystemCell(() -> new CachingServo(getHardwareMap().get(Servo.class, "sampleManipulator")));
     private final Cell<CachingServo> clawRot = subsystemCell(()-> new CachingServo(getHardwareMap().get(Servo.class,"clawRot")));
     //Use CRServo for Hybrid
     //private final Cell<CachingCRServo> clawServo = subsystemCell(() -> new CachingCRServo(getHardwareMap().get(CRServo.class, "frontL")));
     //For old bot sample and specimen manip is the same
 
+    public boolean clawOpen = false;
+    public double clawAdjustmentStage = 0;
+    private HashMap<Object, Command> stateToCommandMap;
+
     private SampleManipulator(){
+        stateToCommandMap = new HashMap<Object, Command>() {{
+            put(RobotState.IDLE, new Lambda("IDLE ARM").addExecute(() -> {
+                clawOpen=false;
+                clawAdjustmentStage=0;
+            }));
+            put(RobotState.DEPOSIT, new Lambda("DEPOSIT ARM").addExecute(() -> {
+                clawOpen=false;
+                clawAdjustmentStage=4;
+            }));
+            put(RobotState.HOVERBEFOREGRAB, new Lambda("HBG ARM").addExecute(() -> {
+                clawOpen=true;
+                clawAdjustmentStage=0;
+            }));
+            put(RobotState.GRAB, new Lambda("GRAB ARM").addExecute(() -> {
+                clawOpen=true;
+                clawAdjustmentStage=0;;
+            }));
+            put(RobotState.HOVERAFTERGRAB, new Lambda("HAG ARM").addExecute(() -> {
+                clawOpen=false;
+                clawAdjustmentStage=0;
+            }));
+            put(RobotState.INTAKESPECIMEN, new Lambda("INTAKE SPECIMEN ARM").addExecute(() -> {
+                clawOpen=true;
+                clawAdjustmentStage=0;
+            }));
+            put(RobotState.DEPOSITSPECIMEN,new Lambda("DEPOSIT SPECIMEN ARM").addExecute(() -> {
+                clawOpen=true;
+                clawAdjustmentStage=4;
+            }));
+            put(RobotState.PARKASCENT, new Lambda("PARK ASCENT ARM").addExecute(() -> {
+                //This doesn't exist rn
+            }));
+            put(RobotState.PARKNOASCENT, new Lambda("PARK NO ASCENT ARM").addExecute(() -> {
+                // Yeah nah don't got time for this
+            }));
+        }};
     }
 
     @Override
@@ -44,107 +85,21 @@ public class SampleManipulator extends SDKSubsystem {
         getTelemetry().addLine("Claw Initalising");
 
         setDefaultCommand(
-                new Parallel(
-                openCloseClaw(),
-                defaultClaw()
-                )
+                updateClaw()
         );
 
     }
 
-
     @NonNull
-    public Lambda defaultClaw() {
-        return new Lambda ("Default Claw Command")
-                .addExecute(()-> {
-                    clawRot.get().setPosition(0 + clawAdjustmentStage*0.15);
-                });
-    }
-
-    @NonNull
-    public Lambda rotateClawForwards(){
-        return new Lambda("Rotate Claw")
-                .addExecute(()->{
-                    if (!(clawAdjustmentStage+1 >6 || clawAdjustmentStage+1 <0)){
-                     clawAdjustmentStage=clawAdjustmentStage+1;
-                    }
-                });
-    }
-
-    @NonNull
-    public Lambda rotateClawBackwards(){
-        return new Lambda("Rotate Claw Back")
-                .addExecute(()->{
-                    if (!(clawAdjustmentStage-1 >6 || clawAdjustmentStage-1 <0)){
-                        clawAdjustmentStage=clawAdjustmentStage-1;
-                    }
-                });
-    }
-
-    @NonNull
-    public Lambda resetClawRotAutomatically(){
-        return new Lambda("Reset Adjustment")
-                .addExecute(()->{
-                    switch (Globals.INSTANCE.getRobotState()) {
-                        case IDLE:
-                            clawAdjustmentStage=0;
-                            break;
-                        case DEPOSIT:
-                            clawAdjustmentStage=0;
-                            break;
-                        case DEPOSITSPECIMEN:
-                            clawAdjustmentStage=4;
-                            break;
-                        case INTAKESPECIMEN:
-                            clawAdjustmentStage=0;
-                            break;
-                        default:
-                            break;
-                    }
-                });
-    }
-
-    @NonNull
-    public Lambda openCloseClaw() {
-        return new Lambda("Claw")
+    public Lambda updateClaw() {
+        return new Lambda("updateClaw")
                 .addRequirements(INSTANCE)
                 .addExecute(()-> {
-                    if (Globals.updateRobotStateTrue == true) {
-                    switch (Globals.INSTANCE.getRobotState()) {
-                        case IDLE:
-                            clawOpen = true;
-                            break;
-                        case GRAB:
-                            clawOpen = true;
-                            break;
-                        case DEPOSIT:
-                            clawOpen = true;
-                            break;
-                        case HOVERAFTERGRAB:
-                            clawOpen = true;
-                            break;
-                        default:
-                            clawOpen = false;
-                            break;
-                    }
-                    if (clawOpen == true) {
-                        clawServo.get().setPosition(0.8);
-                        //Turn forever
-                    } else if (clawOpen != true) {
-                        clawServo.get().setPosition(0.36);
-                        //Don't turn
-                    }
-                }
-                });
-    }
-
-    @NonNull
-    public Lambda intakeSpecimenSequence(){
-        return new Lambda ("Claw Intake")
-                .addExecute(()->{
-                    clawOpen=false;
-                    clawServo.get().setPosition(0.8);
-                });
+                            if (Globals.updateRobotStateTrue == true) {
+                                new Lambda("Run Change State for Claw").addExecute(() -> stateToCommandMap.get(Globals.getRobotState()));
+                            }
+                        }
+                );
     }
 
     @NonNull
@@ -165,6 +120,26 @@ public class SampleManipulator extends SDKSubsystem {
                     }
                     getTelemetry().addLine("Claw Toggled");
                     getTelemetry().update();
+                });
+    }
+
+    @NonNull
+    public Lambda rotateClawForwards(){
+        return new Lambda("Rotate Claw")
+                .addExecute(()->{
+                    if (!(clawAdjustmentStage+1 >6 || clawAdjustmentStage+1 <0)){
+                        clawAdjustmentStage=clawAdjustmentStage+1;
+                    }
+                });
+    }
+
+    @NonNull
+    public Lambda rotateClawBackwards(){
+        return new Lambda("Rotate Claw Back")
+                .addExecute(()->{
+                    if (!(clawAdjustmentStage-1 >6 || clawAdjustmentStage-1 <0)){
+                        clawAdjustmentStage=clawAdjustmentStage-1;
+                    }
                 });
     }
 

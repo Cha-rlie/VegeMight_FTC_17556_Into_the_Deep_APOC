@@ -57,8 +57,8 @@ public class Drivetrain extends SDKSubsystem {
     public void preUserInitHook(@NonNull Wrapper opMode) {
         // Init sequence
 
-        motorFR.get().setDirection(DcMotorSimple.Direction.REVERSE);
-        motorBR.get().setDirection(DcMotorSimple.Direction.REVERSE);
+        motorFL.get().setDirection(DcMotorSimple.Direction.REVERSE);
+        motorBL.get().setDirection(DcMotorSimple.Direction.REVERSE);
         motorFL.get().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorFR.get().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBL.get().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

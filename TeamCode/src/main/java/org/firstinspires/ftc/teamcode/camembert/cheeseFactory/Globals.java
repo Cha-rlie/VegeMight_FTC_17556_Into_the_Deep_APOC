@@ -96,7 +96,6 @@ public class Globals extends SDKSubsystem {
                         }
                     } else if (robotState.get() == RobotState.DEPOSIT) {
                         robotState.accept(RobotState.IDLE);
-                        updateRobotStateTrue=false;
                     } else if (robotState.get() == RobotState.HOVERAFTERGRAB) {
                         robotState.accept(RobotState.GRAB);
                     } else if (robotState.get() == RobotState.GRAB) {
@@ -132,6 +131,7 @@ public class Globals extends SDKSubsystem {
     public Lambda forwardsRobotState() {
         return new Lambda("One Stage Forwards")
                 .addExecute(() -> {
+                    updateRobotStateTrue = true;
                     if (robotState.get() == RobotState.IDLE) {
                         if (isSampleModeTrue) {
                             robotState.accept(RobotState.DEPOSIT);
@@ -147,23 +147,15 @@ public class Globals extends SDKSubsystem {
                     } else if (robotState.get() == RobotState.HOVERBEFOREGRAB) {
                         robotState.accept(RobotState.GRAB);
                     } else if (robotState.get() == RobotState.INTAKESPECIMEN) {
-
-
                         robotState.accept(RobotState.IDLE);
+                        //Add commands in later
 
                     } else if (robotState.get() == RobotState.DEPOSITSPECIMEN) {
-                        //Another Sequence of commands
-                        robotState.accept(RobotState.NULL);
-                        new Sequential(
-                                new Wait(0.01),
-                                Lift.INSTANCE.specimenDepositSequence(),
-                                new Wait(0.35),
-                                SampleManipulator.INSTANCE.toggleClaw(),
-                                new Wait(0.3)
-                        );
                         robotState.accept(RobotState.IDLE);
-
+                        //Add commands in later
                     }
+                    new Wait(0.1);
+                    updateRobotStateTrue=false;
                 });
     }
 

@@ -5,17 +5,20 @@ import androidx.annotation.NonNull;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.camembert.cheeseFactory.Globals;
+import org.firstinspires.ftc.teamcode.camembert.cheeseFactory.RobotState;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.HashMap;
 
 import dev.frozenmilk.dairy.cachinghardware.CachingServo;
 import dev.frozenmilk.dairy.core.dependency.Dependency;
 import dev.frozenmilk.dairy.core.dependency.annotation.SingleAnnotations;
 import dev.frozenmilk.dairy.core.wrapper.Wrapper;
+import dev.frozenmilk.mercurial.commands.Command;
 import dev.frozenmilk.mercurial.commands.Lambda;
 import dev.frozenmilk.mercurial.subsystems.SDKSubsystem;
 import dev.frozenmilk.mercurial.subsystems.Subsystem;
@@ -26,8 +29,20 @@ public class Wrist extends SDKSubsystem {
     public static final Wrist INSTANCE = new Wrist();
 
     public final Cell<CachingServo> wristServo= subsystemCell(() -> new CachingServo(getHardwareMap().get(Servo.class, "wristRot")));
+    private HashMap<Object, Command> stateToCommandMap;
 
     private Wrist(){
+        stateToCommandMap = new HashMap<Object, Command>() {{
+            put(RobotState.IDLE, new Lambda("IDLE WRIST").addExecute(() -> wristServo.get().setPosition(0.12)));
+            put(RobotState.DEPOSIT, new Lambda("DEPOSIT WRIST").addExecute(() -> wristServo.get().setPosition(0.51)));
+            put(RobotState.HOVERBEFOREGRAB, new Lambda("HBG WRIST").addExecute(() -> wristServo.get().setPosition(0.21)));
+            put(RobotState.GRAB, new Lambda("GRAB WRIST").addExecute(() -> wristServo.get().setPosition(0.21)));
+            put(RobotState.HOVERAFTERGRAB, new Lambda("HAG WRIST").addExecute(() -> wristServo.get().setPosition(0.21)));
+            put(RobotState.INTAKESPECIMEN, new Lambda("INTAKE SPECIMEN WRIST").addExecute(() -> wristServo.get().setPosition(0.55)));
+            put(RobotState.DEPOSITSPECIMEN,new Lambda("DEPOSIT SPECIMEN WRIST").addExecute(() -> wristServo.get().setPosition(0.12)));
+            put(RobotState.PARKASCENT, new Lambda("PARK ASCENT WRIST").addExecute(() -> wristServo.get().setPosition(0.12)));
+            put(RobotState.PARKNOASCENT, new Lambda("PARK NO ASCENT WRIST").addExecute(() -> wristServo.get().setPosition(0.12)));
+        }};
     }
 
     @Override
@@ -44,31 +59,7 @@ public class Wrist extends SDKSubsystem {
                 .addRequirements(INSTANCE)
                 .addExecute(()-> {
                             if (Globals.updateRobotStateTrue == true) {
-                                switch (Globals.INSTANCE.getRobotState()) {
-                                    case IDLE:
-                                        wristServo.get().setPosition(0.12);
-                                        break;
-                                    case DEPOSIT:
-                                        wristServo.get().setPosition(0.51);
-                                        break;
-                                    case HOVERAFTERGRAB:
-                                        wristServo.get().setPosition(0.21);
-                                        break;
-                                    case HOVERBEFOREGRAB:
-                                        wristServo.get().setPosition(0.21);
-                                        break;
-                                    case GRAB:
-                                        wristServo.get().setPosition(0.21);
-                                        break;
-                                    case INTAKESPECIMEN:
-                                        wristServo.get().setPosition(0.55);
-                                        break;
-                                    case NULL:
-                                        break;
-                                    default:
-                                        wristServo.get().setPosition(0.12);
-                                        break;
-                                }
+                                new Lambda("Run Change State for Wrist").addExecute(() -> stateToCommandMap.get(Globals.getRobotState()));
                             }
                         }
                 );

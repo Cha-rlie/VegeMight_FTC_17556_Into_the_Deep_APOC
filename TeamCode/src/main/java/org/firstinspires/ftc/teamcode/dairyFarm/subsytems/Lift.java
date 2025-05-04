@@ -103,8 +103,6 @@ public class Lift extends SDKSubsystem {
                             motorLiftL.get().setTargetPosition(1700);
                             motorLiftR.get().setTargetPosition(1700);
                             break;
-                        case NULL:
-                            break;
                         default:
                             motorLiftL.get().setTargetPosition(0);
                             motorLiftR.get().setTargetPosition(0);
