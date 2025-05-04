@@ -20,6 +20,7 @@ import dev.frozenmilk.dairy.core.dependency.annotation.SingleAnnotations;
 import dev.frozenmilk.dairy.core.wrapper.Wrapper;
 import dev.frozenmilk.mercurial.commands.Command;
 import dev.frozenmilk.mercurial.commands.Lambda;
+import dev.frozenmilk.mercurial.commands.groups.Parallel;
 import dev.frozenmilk.mercurial.subsystems.SDKSubsystem;
 import dev.frozenmilk.mercurial.subsystems.Subsystem;
 import dev.frozenmilk.util.cell.Cell;
@@ -81,7 +82,10 @@ public class SampleManipulator extends SDKSubsystem {
         getTelemetry().addLine("Claw Initalising");
 
         setDefaultCommand(
-                updateClaw()
+                new Parallel(
+                updateClaw(),
+                rotateClaw()
+                )
         );
 
     }
@@ -96,6 +100,14 @@ public class SampleManipulator extends SDKSubsystem {
                             }
                         }
                 );
+    }
+
+    @NonNull
+    public Lambda rotateClaw(){
+        return new Lambda("rotateClaw")
+                .addExecute(()->{
+                    clawRot.get().setPosition(clawAdjustmentStage*0.15);
+                });
     }
 
     @NonNull
