@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.dairyFarm.subsytems.Lift;
 import org.firstinspires.ftc.teamcode.dairyFarm.subsytems.SampleManipulator;
-import org.firstinspires.ftc.teamcode.dairyFarm.subsytems.SpecimenManipulator;
 import org.firstinspires.ftc.teamcode.dairyFarm.subsytems.Wrist;
 
 import java.lang.annotation.ElementType;
