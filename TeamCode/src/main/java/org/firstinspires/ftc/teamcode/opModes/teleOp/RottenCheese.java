@@ -1,17 +1,10 @@
 package org.firstinspires.ftc.teamcode.opModes.teleOp;
 
-import androidx.annotation.NonNull;
-
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.robot.Robot;
 
-import dev.frozenmilk.dairy.core.util.OpModeLazyCell;
 import dev.frozenmilk.mercurial.Mercurial;
-import dev.frozenmilk.mercurial.commands.Command;
-import dev.frozenmilk.mercurial.commands.Lambda;
 import dev.frozenmilk.mercurial.commands.groups.Parallel;
-import dev.frozenmilk.mercurial.commands.groups.Sequential;
 
 import org.firstinspires.ftc.teamcode.camembert.cheeseFactory.Globals;
 import org.firstinspires.ftc.teamcode.camembert.cheeseFactory.RobotState;
@@ -23,7 +16,7 @@ import org.firstinspires.ftc.teamcode.dairyFarm.subsytems.SampleManipulator;
 import org.firstinspires.ftc.teamcode.dairyFarm.subsytems.Wrist;
 
 // Sets this class as a TeleOp
-@TeleOp(name="NormalTeleOp")
+@TeleOp(name="RottenCheese")
 // Enables the scheduler
 @Mercurial.Attach
 // Add additional Subsystem attaches
@@ -36,7 +29,7 @@ import org.firstinspires.ftc.teamcode.dairyFarm.subsytems.Wrist;
 @SampleManipulator.Attach
 //Attach Pitching Later
 
-public class TeleOpTest extends OpMode {
+public class RottenCheese extends OpMode {
     public RobotState currentRobotState = RobotState.IDLE;
 
     @Override
