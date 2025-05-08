@@ -41,6 +41,7 @@ public class RottenCheese extends OpMode {
 
         // Apply bindings
 
+        //State Changing Gamebinds
         Mercurial.gamepad1().rightBumper().onTrue(
                 //Update Status
                 Globals.INSTANCE.forwardsRobotState());
@@ -48,6 +49,23 @@ public class RottenCheese extends OpMode {
         Mercurial.gamepad1().leftBumper().onTrue(
                 //Update status
                 Globals.INSTANCE.backwardsRobotState());
+
+        Mercurial.gamepad1().touchpad().onTrue(
+                Globals.INSTANCE.goToIdle()
+        );
+
+        Mercurial.gamepad1().guide().onTrue(
+                Globals.INSTANCE.reject()
+        );
+
+        // MODE CHANGING GAMEBIND
+        Mercurial.gamepad1().dpadLeft().onTrue(
+                new Parallel(
+                        Globals.INSTANCE.goToIdle(),
+                        Globals.INSTANCE.changeState()
+                ));
+
+        // Claw Changing Gamebinds
 
         Mercurial.gamepad1().circle().onTrue(
           SampleManipulator.INSTANCE.rotateClawForwards()
@@ -61,13 +79,7 @@ public class RottenCheese extends OpMode {
                 SampleManipulator.INSTANCE.toggleClaw()
         );
 
-        Mercurial.gamepad1().dpadLeft().onTrue(
-                new Parallel(
-                        Globals.INSTANCE.goToIdle(),
-                        Globals.INSTANCE.changeState()
-                ));
-
-
+        // Wrist Changing Gamebinds
 
         Mercurial.gamepad2().dpadDown().onTrue(
                 Wrist.INSTANCE.adjustWristDown()
@@ -75,6 +87,9 @@ public class RottenCheese extends OpMode {
         Mercurial.gamepad2().dpadUp().onTrue(
                 Wrist.INSTANCE.adjustWristUp()
         );
+
+
+        // Arm Changing Gamebinds
 
         Mercurial.gamepad2().triangle().onTrue(
                 Arm.INSTANCE.adjustArmUp()
