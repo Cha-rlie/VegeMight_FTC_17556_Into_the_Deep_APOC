@@ -40,7 +40,8 @@ public class Pitching extends SDKSubsystem {
             put(RobotState.HOVERBEFOREGRAB, new Lambda("HBG WRIST").addExecute(() -> runToPos = 0));
             put(RobotState.GRAB, new Lambda("GRAB WRIST").addExecute(() -> runToPos = 0));
             put(RobotState.HOVERAFTERGRAB, new Lambda("HAG WRIST").addExecute(() -> runToPos = 0));
-            put(RobotState.INTAKESPECIMEN, new Lambda("INTAKE SPECIMEN WRIST").addExecute(() -> runToPos = 0));
+            put(RobotState.SPECHOVER, new Lambda("INTAKE SPECIMEN WRIST").addExecute(() -> runToPos = 0));
+            put(RobotState.SPECGRAB, new Lambda("INTAKE SPECIMEN WRIST").addExecute(() -> runToPos = 0));
             put(RobotState.DEPOSITSPECIMEN, new Lambda("DEPOSIT SPECIMEN WRIST").addExecute(() -> runToPos = 0));
             put(RobotState.PARKASCENT, new Lambda("PARK ASCENT WRIST").addExecute(() -> runToPos = 0));
             put(RobotState.PARKNOASCENT, new Lambda("PARK NO ASCENT WRIST").addExecute(() -> runToPos = 0));

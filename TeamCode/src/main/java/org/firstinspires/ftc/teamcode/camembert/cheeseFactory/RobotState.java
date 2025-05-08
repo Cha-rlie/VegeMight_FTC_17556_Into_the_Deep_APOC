@@ -1,19 +1,24 @@
 package org.firstinspires.ftc.teamcode.camembert.cheeseFactory;
 
 public enum RobotState {
+
+    // New global states
     IDLE,
-    // Sample scoring states
+    REJECT,
+
+    // New sample states
+    DEPOSIT,
+    HOVERAFTERGRAB,
     HOVERBEFOREGRAB,
     GRAB,
-    HOVERAFTERGRAB,
-    DEPOSIT,
 
-    // Specimen scoring states
-    INTAKESPECIMEN,
+    // New specimen scoring states
     DEPOSITSPECIMEN,
+    SPECHOVER,
+    SPECGRAB,
 
-    //Park
-    PARKASCENT,
+    // Park
     PARKNOASCENT,
+    PARKASCENT
 
 }

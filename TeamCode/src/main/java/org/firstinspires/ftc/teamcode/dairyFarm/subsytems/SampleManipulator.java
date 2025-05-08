@@ -53,14 +53,18 @@ public class SampleManipulator extends SDKSubsystem {
             }));
             put(RobotState.GRAB, new Lambda("GRAB ARM").addExecute(() -> {
                 clawOpen=true;
-                clawAdjustmentStage=0;;
+                clawAdjustmentStage=0;
             }));
             put(RobotState.HOVERAFTERGRAB, new Lambda("HAG ARM").addExecute(() -> {
                 clawOpen=false;
                 clawAdjustmentStage=0;
             }));
-            put(RobotState.INTAKESPECIMEN, new Lambda("INTAKE SPECIMEN ARM").addExecute(() -> {
+            put(RobotState.SPECHOVER, new Lambda("INTAKE SPECIMEN ARM").addExecute(() -> {
                 clawOpen=true;
+                clawAdjustmentStage=0;
+            }));
+            put(RobotState.SPECGRAB, new Lambda("INTAKE SPECIMEN ARM").addExecute(() -> {
+                clawOpen=false;
                 clawAdjustmentStage=0;
             }));
             put(RobotState.DEPOSITSPECIMEN,new Lambda("DEPOSIT SPECIMEN ARM").addExecute(() -> {

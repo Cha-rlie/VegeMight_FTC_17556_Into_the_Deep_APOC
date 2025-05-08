@@ -2,17 +2,14 @@ package org.firstinspires.ftc.teamcode.camembert.cheeseFactory;
 
 import androidx.annotation.NonNull;
 
-import com.qualcomm.robotcore.hardware.Servo;
-
-import org.firstinspires.ftc.teamcode.dairyFarm.subsytems.Lift;
 import org.firstinspires.ftc.teamcode.dairyFarm.subsytems.SampleManipulator;
-import org.firstinspires.ftc.teamcode.dairyFarm.subsytems.Wrist;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.HashMap;
 
 import dev.frozenmilk.dairy.core.dependency.Dependency;
 import dev.frozenmilk.dairy.core.dependency.annotation.SingleAnnotations;
@@ -20,7 +17,6 @@ import dev.frozenmilk.dairy.core.util.OpModeLazyCell;
 import dev.frozenmilk.dairy.core.wrapper.Wrapper;
 import dev.frozenmilk.mercurial.commands.Command;
 import dev.frozenmilk.mercurial.commands.Lambda;
-import dev.frozenmilk.mercurial.commands.groups.Parallel;
 import dev.frozenmilk.mercurial.commands.groups.Sequential;
 import dev.frozenmilk.mercurial.commands.util.Wait;
 import dev.frozenmilk.mercurial.subsystems.SDKSubsystem;
@@ -36,39 +32,108 @@ public class Globals extends SDKSubsystem {
     // Declare the global variables
     private OpModeLazyCell<RobotState> robotState = new OpModeLazyCell<>(() -> RobotState.IDLE);
 
-    public static double WRIST_IDLE = 0.12; //0.36;
-    public static double WRIST_PICKUP = 0.21;
-    public static double WRIST_DEPOSIT = 0.51;
-    public static double WRIST_PARK = 0.455;
-    public static double WRIST_SPECIMEN_DEPOSIT = 0.9;
-    public static double WRIST_SPECIMEN_DEPOSIT_TELEOP = 0.79;
-    public static double WRIST_SPECIMEN_PICKUP = 0.55;
-
-    public static double CLAW_OPEN = 0.8;
-    public static double CLAW_CLOSED = 0.36; //1;
-
-    public static double ARM_IDLE = 0; //0.028;
-    public static double ARM_HOVER = 0.4942;
-    public static double ARM_PICKUP = 0.5723;
-    public static double ARM_DEPOSIT = 0.237;
-    //public WHAT HERE CHARLIE_
-    public static double ARM_PARK = 0.28;
-    public static double ARM_SPECIMEN_PICKUP = 0.4929;
-    public static double ARM_SPECIMEN_DEPOSIT= 0;
-
-    public static int LIFT_LOW = 0;
-    public static int LIFT_HIGH = 1700;
-    public static int LIFT_SPECIMEN_DEPOSIT = 100;
-    public static int LIFT_SPECIMEN_HOVER = 1250;
-    public static int LIFT_SPECIMEN_PICKUP = 600;
-    public static int LIFT_SPECIMEN_HOVER_TELEOP = 940;
-
-    public static int FLAG_UP =1;
-    public static double FLAG_DOWN= 0.33;
-
-    // Constructor that builds the drivetrain subsystem class
+    private HashMap<Object, Command> goForwardState;
+    private HashMap <Object, Command> goBackwardState;
+    
+    // Constructor that builds the drivetrain subsystem class and Hashmaps :D
     public Globals() {
         robotState.accept(RobotState.IDLE);
+
+        goForwardState = new HashMap<Object, Command>() {{
+            //Global States
+            put(RobotState.IDLE, new Lambda("Go forwards from IDLE").addExecute(()-> {
+                if (Globals.isSampleModeTrue == true) {
+                    robotState.accept(RobotState.DEPOSIT);
+                } else {
+                    robotState.accept(RobotState.DEPOSITSPECIMEN);
+                }
+            }));
+            put(RobotState.REJECT, new Lambda("Go forwards from REJECT").addExecute(()->{
+                new Sequential(
+                        new Lambda("Open Claw").addExecute(()->{SampleManipulator.INSTANCE.clawOpen=true;}), //OPEN CLAW
+                        new Wait(0.1),
+                        new Lambda ("Spec or sample reject").addExecute(()->{
+                            if (Globals.isSampleModeTrue == true) {
+                                new Lambda("To HOVER").addExecute(()->{robotState.accept(RobotState.HOVERBEFOREGRAB);});
+                            } else {
+                                new Lambda("To HOVER").addExecute(()->{robotState.accept(RobotState.SPECHOVER);});
+                            }
+                        })
+                );
+            }));
+
+            //Sample states
+            put(RobotState.DEPOSIT, new Lambda("Go forwards from IDLE").addExecute(()->{
+                new Sequential(
+                    new Lambda("Open Claw").addExecute(()->{SampleManipulator.INSTANCE.clawOpen=true;}), //OPEN CLAW
+                    new Lambda("To IDLE").addExecute(()->{robotState.accept(RobotState.IDLE);}) // Go to IDLE ** NEED TO MAKE THIS NO L3 ASCENT **
+                );
+            }));
+            put(RobotState.HOVERAFTERGRAB, new Lambda("Go forwards from HOVER AFTER").addExecute(()->{
+                robotState.accept(RobotState.IDLE);
+            }));
+            put(RobotState.HOVERBEFOREGRAB, new Lambda("Go forwards from HOVER BEFORE").addExecute(()->{
+                robotState.accept(RobotState.GRAB);
+            }));
+            put(RobotState.GRAB, new Lambda("Go forwards from HOVER GRAB").addExecute(()->{
+                robotState.accept(RobotState.HOVERAFTERGRAB);
+            }));
+
+            //Specimen States
+            put(RobotState.DEPOSITSPECIMEN, new Lambda("Go forwards from SPECDEPOSIT").addExecute(()->{
+                // WHATEVER GOES HERE - DUNNO ABT NEW SPEC
+                robotState.accept(RobotState.IDLE);
+            }));
+            put(RobotState.SPECHOVER, new Lambda("Go forwards from SPECHOVER").addExecute(()->{
+                // WHATEVER GOES HERE - DUNNO ABT NEW SPEC
+                robotState.accept(RobotState.GRAB);
+            }));
+            put(RobotState.SPECGRAB, new Lambda("Go forwards from SPECGRAB").addExecute(()->{
+                // WHATEVER GOES HERE - DUNNO ABT NEW SPEC
+                robotState.accept(RobotState.IDLE);
+            }));
+        }};
+
+        goBackwardState = new HashMap<Object, Command>() {{
+            //Global States
+            put(RobotState.IDLE, new Lambda("Go forwards from IDLE").addExecute(()-> {
+                if (Globals.isSampleModeTrue == true) {
+                    robotState.accept(RobotState.HOVERBEFOREGRAB);
+                } else {
+                    robotState.accept(RobotState.SPECHOVER);
+                }
+            }));
+            //NOTE TO SELF - REJECT HAS NO BACKWARDS
+
+            //Sample states
+            put(RobotState.DEPOSIT, new Lambda("Go forwards from IDLE").addExecute(()->{
+                new Lambda("To IDLE").addExecute(()->{robotState.accept(RobotState.IDLE);}); // DO NOT OPEN CLAW
+            }));
+            put(RobotState.HOVERAFTERGRAB, new Lambda("Go forwards from HOVER AFTER").addExecute(()->{
+                robotState.accept(RobotState.GRAB);
+            }));
+            put(RobotState.HOVERBEFOREGRAB, new Lambda("Go forwards from HOVER BEFORE").addExecute(()->{
+                robotState.accept(RobotState.IDLE);
+            }));
+            put(RobotState.GRAB, new Lambda("Go forwards from HOVER GRAB").addExecute(()->{
+                robotState.accept(RobotState.HOVERBEFOREGRAB);
+            }));
+
+            //Specimen States
+            put(RobotState.DEPOSITSPECIMEN, new Lambda("Go forwards from SPECDEPOSIT").addExecute(()->{
+                // WHATEVER GOES HERE - DUNNO ABT NEW SPEC
+                robotState.accept(RobotState.IDLE);
+            }));
+            put(RobotState.SPECHOVER, new Lambda("Go forwards from SPECHOVER").addExecute(()->{
+                // WHATEVER GOES HERE - DUNNO ABT NEW SPEC
+                robotState.accept(RobotState.IDLE);
+            }));
+            put(RobotState.SPECGRAB, new Lambda("Go forwards from SPECGRAB").addExecute(()->{
+                // WHATEVER GOES HERE - DUNNO ABT NEW SPEC
+                robotState.accept(RobotState.SPECHOVER);
+            }));
+        }};
+
     }
 
     public static RobotState getRobotState() {
@@ -83,33 +148,19 @@ public class Globals extends SDKSubsystem {
 
     @NonNull
     public Lambda backwardsRobotState() {
-        return new Lambda("One Stage Backwards")
-                .addExecute(() -> {
-                    updateRobotStateTrue = true;
-                    if (robotState.get() == RobotState.IDLE) {
-                        if (isSampleModeTrue) {
-                            robotState.accept(RobotState.HOVERBEFOREGRAB);
-                            getTelemetry().addLine("SHOULD BE HOVERBEFOREGRAB");
-                        } else if (!isSampleModeTrue) {
-                            robotState.accept(RobotState.INTAKESPECIMEN);
+        return new Lambda("Backwards State")
+                .addRequirements(INSTANCE)
+                .addExecute(()-> {
+                            updateRobotStateTrue=true;
+                            if (Globals.updateRobotStateTrue == true) {
+                                new Lambda("Immmmm going back").addExecute(() -> goBackwardState.get(Globals.getRobotState()));
+                            }
+                            new Wait(0.1);
+                            updateRobotStateTrue=false;
                         }
-                    } else if (robotState.get() == RobotState.DEPOSIT) {
-                        robotState.accept(RobotState.IDLE);
-                    } else if (robotState.get() == RobotState.HOVERAFTERGRAB) {
-                        robotState.accept(RobotState.GRAB);
-                    } else if (robotState.get() == RobotState.GRAB) {
-                        robotState.accept(RobotState.HOVERBEFOREGRAB);
-                    } else if (robotState.get() == RobotState.HOVERBEFOREGRAB) {
-                        robotState.accept(RobotState.IDLE);
-                    } else if (robotState.get() == RobotState.INTAKESPECIMEN) {
-                        robotState.accept(RobotState.IDLE);
-                    } else if (robotState.get() == RobotState.DEPOSITSPECIMEN) {
-                        robotState.accept(RobotState.IDLE);
-                    }
-                    new Wait(0.1);
-                    updateRobotStateTrue=false;
-                });
+                );
     }
+
     @NonNull
     public Lambda goToIdle() {
         return new Lambda("Go IDLE")
@@ -117,6 +168,14 @@ public class Globals extends SDKSubsystem {
                    if (robotState.get() != RobotState.IDLE) {
                        robotState.accept(RobotState.IDLE);
                    }
+                });
+    }
+
+    @NonNull
+    public Lambda reject() {
+        return new Lambda("GO REJECT")
+                .addExecute(()->{
+                   robotState.accept(RobotState.REJECT);
                 });
     }
 
@@ -128,34 +187,17 @@ public class Globals extends SDKSubsystem {
     }
     @NonNull
     public Lambda forwardsRobotState() {
-        return new Lambda("One Stage Forwards")
-                .addExecute(() -> {
-                    updateRobotStateTrue = true;
-                    if (robotState.get() == RobotState.IDLE) {
-                        if (isSampleModeTrue) {
-                            robotState.accept(RobotState.DEPOSIT);
-                        } else if (!isSampleModeTrue) {
-                            robotState.accept(RobotState.DEPOSITSPECIMEN);
+        return new Lambda("Forwards State")
+                .addRequirements(INSTANCE)
+                .addExecute(()-> {
+                            updateRobotStateTrue=true;
+                            if (Globals.updateRobotStateTrue == true) {
+                                new Lambda("Immmmm going forwards").addExecute(() -> goForwardState.get(Globals.getRobotState()));
+                            }
+                            new Wait(0.1);
+                            updateRobotStateTrue=false;
                         }
-                    } else if (robotState.get() == RobotState.DEPOSIT) {
-                        robotState.accept(RobotState.IDLE);
-                    } else if (robotState.get() == RobotState.HOVERAFTERGRAB) {
-                        robotState.accept(RobotState.IDLE);
-                    } else if (robotState.get() == RobotState.GRAB) {
-                        robotState.accept(RobotState.HOVERAFTERGRAB);
-                    } else if (robotState.get() == RobotState.HOVERBEFOREGRAB) {
-                        robotState.accept(RobotState.GRAB);
-                    } else if (robotState.get() == RobotState.INTAKESPECIMEN) {
-                        robotState.accept(RobotState.IDLE);
-                        //Add commands in later
-
-                    } else if (robotState.get() == RobotState.DEPOSITSPECIMEN) {
-                        robotState.accept(RobotState.IDLE);
-                        //Add commands in later
-                    }
-                    new Wait(0.1);
-                    updateRobotStateTrue=false;
-                });
+                );
     }
 
     @Override

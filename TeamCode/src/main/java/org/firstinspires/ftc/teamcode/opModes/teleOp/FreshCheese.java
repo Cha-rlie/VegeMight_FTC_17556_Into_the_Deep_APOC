@@ -19,6 +19,7 @@ import dev.frozenmilk.mercurial.commands.groups.Parallel;
 @TeleOp(name="FreshCheese")
 
 @Globals.Attach
+@Drivetrain.Attach
 @SampleManipulator2.Attach
 
 public class FreshCheese extends OpMode{

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.dairyFarm.subsytems;
 
 import androidx.annotation.NonNull;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
@@ -27,8 +28,8 @@ public class SampleManipulator2 extends SDKSubsystem {
 
     private final Cell<CachingCRServo> intakeServo = subsystemCell(() -> new CachingCRServo(getHardwareMap().get(CRServo.class, "sampleManipulator")));
 
-    public boolean intakeIsTrue = true;
-    public double speedOfRotation=1;
+    public static boolean intakeIsTrue = true;
+    public static double speedOfRotation=1;
 
     @Override
     public void preUserInitHook(@NonNull Wrapper opMode) {

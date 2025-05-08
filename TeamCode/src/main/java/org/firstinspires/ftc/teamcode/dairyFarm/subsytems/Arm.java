@@ -58,7 +58,11 @@ public class Arm extends SDKSubsystem {
                 leftArm.get().setPosition(0.4942);
                 rightArm.get().setPosition(0.4942);
             }));
-            put(RobotState.INTAKESPECIMEN, new Lambda("INTAKE SPECIMEN ARM").addExecute(() -> {
+            put(RobotState.SPECHOVER, new Lambda("INTAKE SPECIMEN ARM").addExecute(() -> {
+                leftArm.get().setPosition(0.4929);
+                rightArm.get().setPosition(0.4929);
+            }));
+            put(RobotState.SPECGRAB, new Lambda("INTAKE SPECIMEN ARM").addExecute(() -> {
                 leftArm.get().setPosition(0.4929);
                 rightArm.get().setPosition(0.4929);
             }));

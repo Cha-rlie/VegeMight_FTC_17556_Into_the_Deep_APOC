@@ -38,7 +38,8 @@ public class Wrist extends SDKSubsystem {
             put(RobotState.HOVERBEFOREGRAB, new Lambda("HBG WRIST").addExecute(() -> wristServo.get().setPosition(0.21)));
             put(RobotState.GRAB, new Lambda("GRAB WRIST").addExecute(() -> wristServo.get().setPosition(0.21)));
             put(RobotState.HOVERAFTERGRAB, new Lambda("HAG WRIST").addExecute(() -> wristServo.get().setPosition(0.21)));
-            put(RobotState.INTAKESPECIMEN, new Lambda("INTAKE SPECIMEN WRIST").addExecute(() -> wristServo.get().setPosition(0.55)));
+            put(RobotState.SPECHOVER, new Lambda("INTAKE SPECIMEN WRIST").addExecute(() -> wristServo.get().setPosition(0.55)));
+            put(RobotState.SPECGRAB, new Lambda("INTAKE SPECIMEN WRIST").addExecute(() -> wristServo.get().setPosition(0.55)));
             put(RobotState.DEPOSITSPECIMEN,new Lambda("DEPOSIT SPECIMEN WRIST").addExecute(() -> wristServo.get().setPosition(0.12)));
             put(RobotState.PARKASCENT, new Lambda("PARK ASCENT WRIST").addExecute(() -> wristServo.get().setPosition(0.12)));
             put(RobotState.PARKNOASCENT, new Lambda("PARK NO ASCENT WRIST").addExecute(() -> wristServo.get().setPosition(0.12)));

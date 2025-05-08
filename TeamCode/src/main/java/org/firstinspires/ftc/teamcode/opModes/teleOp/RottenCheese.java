@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.opModes.teleOp;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -17,6 +18,7 @@ import org.firstinspires.ftc.teamcode.dairyFarm.subsytems.Wrist;
 
 // Sets this class as a TeleOp
 @TeleOp(name="RottenCheese")
+@Config
 // Enables the scheduler
 @Mercurial.Attach
 // Add additional Subsystem attaches
