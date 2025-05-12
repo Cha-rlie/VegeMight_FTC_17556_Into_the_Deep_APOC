@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.camembert.cheeseFactory;
 
 import androidx.annotation.NonNull;
 
-import org.firstinspires.ftc.teamcode.dairyFarm.subsytems.SampleManipulator;
+import org.firstinspires.ftc.teamcode.dairyFarm.subsytems.OLDINTAKE;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
@@ -50,7 +50,8 @@ public class Globals extends SDKSubsystem {
             }));
             put(RobotState.REJECT, new Lambda("Go forwards from REJECT").addExecute(()->{
                 new Sequential(
-                        new Lambda("Open Claw").addExecute(()->{SampleManipulator.INSTANCE.clawOpen=true;}), //OPEN CLAW
+                        new Lambda("Open Claw").addExecute(()->{
+                            OLDINTAKE.INSTANCE.clawOpen=true;}), //OPEN CLAW
                         new Wait(0.1),
                         new Lambda ("Spec or sample reject").addExecute(()->{
                             if (Globals.isSampleModeTrue == true) {
@@ -65,7 +66,8 @@ public class Globals extends SDKSubsystem {
             //Sample states
             put(RobotState.DEPOSIT, new Lambda("Go forwards from IDLE").addExecute(()->{
                 new Sequential(
-                    new Lambda("Open Claw").addExecute(()->{SampleManipulator.INSTANCE.clawOpen=true;}), //OPEN CLAW
+                    new Lambda("Open Claw").addExecute(()->{
+                        OLDINTAKE.INSTANCE.clawOpen=true;}), //OPEN CLAW
                     new Lambda("To IDLE").addExecute(()->{robotState.accept(RobotState.IDLE);}) // Go to IDLE ** NEED TO MAKE THIS NO L3 ASCENT **
                 );
             }));
@@ -175,7 +177,25 @@ public class Globals extends SDKSubsystem {
     public Lambda reject() {
         return new Lambda("GO REJECT")
                 .addExecute(()->{
+                    // Go to idle?
                    robotState.accept(RobotState.REJECT);
+                });
+    }
+
+    @NonNull
+    public Lambda parkAscent() {
+        return new Lambda("parkAscent")
+                .addExecute(()->{
+                    // Go to idle?
+                   robotState.accept(RobotState.PARKASCENT);
+                });
+    }
+
+    @NonNull
+    public Lambda parkNoAscent(){
+        return new Lambda("parkNoAscent")
+                .addExecute(()->{
+                    robotState.accept(RobotState.PARKNOASCENT);
                 });
     }
 

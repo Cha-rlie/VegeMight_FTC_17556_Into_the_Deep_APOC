@@ -26,9 +26,9 @@ import dev.frozenmilk.mercurial.subsystems.Subsystem;
 import dev.frozenmilk.util.cell.Cell;
 import kotlin.annotation.MustBeDocumented;
 
-public class SampleManipulator extends SDKSubsystem {
+public class OLDINTAKE extends SDKSubsystem {
 
-    public static final SampleManipulator INSTANCE = new SampleManipulator();
+    public static final OLDINTAKE INSTANCE = new OLDINTAKE();
 
     private final Cell<CachingServo> clawServo = subsystemCell(() -> new CachingServo(getHardwareMap().get(Servo.class, "sampleManipulator")));
     private final Cell<CachingServo> clawRot = subsystemCell(()-> new CachingServo(getHardwareMap().get(Servo.class,"clawRot")));
@@ -37,7 +37,7 @@ public class SampleManipulator extends SDKSubsystem {
     public double clawAdjustmentStage = 0;
     private HashMap<Object, Command> stateToCommandMap;
 
-    private SampleManipulator(){
+    private OLDINTAKE(){
         stateToCommandMap = new HashMap<Object, Command>() {{
             put(RobotState.IDLE, new Lambda("IDLE ARM").addExecute(() -> {
                 clawOpen=false;
@@ -162,7 +162,7 @@ public class SampleManipulator extends SDKSubsystem {
 
     public @interface Attach{}
 
-    private Dependency<?> dependency = Subsystem.DEFAULT_DEPENDENCY.and(new SingleAnnotations<>(SampleManipulator.Attach.class));
+    private Dependency<?> dependency = Subsystem.DEFAULT_DEPENDENCY.and(new SingleAnnotations<>(OLDINTAKE.Attach.class));
 
     @NonNull
     @Override

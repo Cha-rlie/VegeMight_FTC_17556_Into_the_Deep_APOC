@@ -69,10 +69,19 @@ public class Pitching extends SDKSubsystem {
     }
 
     @NonNull
-    public Lambda adjustPitching(){
+    public Lambda adjustPitchingUp(){
         return new Lambda("Adjust Pitching")
                 .addExecute(()-> {
                     runToPos=runToPos+10;
+                });
+
+    }
+
+    @NonNull
+    public Lambda adjustPitchingDown(){
+        return new Lambda("Adjust Pitching")
+                .addExecute(()-> {
+                    runToPos=runToPos-10;
                 });
 
     }

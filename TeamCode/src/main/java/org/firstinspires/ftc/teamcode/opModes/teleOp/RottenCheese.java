@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.dairyFarm.subsytems.Arm;
 import org.firstinspires.ftc.teamcode.dairyFarm.subsytems.Drivetrain;
 import org.firstinspires.ftc.teamcode.dairyFarm.subsytems.Flag;
 import org.firstinspires.ftc.teamcode.dairyFarm.subsytems.Lift;
-import org.firstinspires.ftc.teamcode.dairyFarm.subsytems.SampleManipulator;
+import org.firstinspires.ftc.teamcode.dairyFarm.subsytems.OLDINTAKE;
 import org.firstinspires.ftc.teamcode.dairyFarm.subsytems.Wrist;
 
 // Sets this class as a TeleOp
@@ -28,7 +28,7 @@ import org.firstinspires.ftc.teamcode.dairyFarm.subsytems.Wrist;
 @Lift.Attach
 @Wrist.Attach
 @Arm.Attach
-@SampleManipulator.Attach
+@OLDINTAKE.Attach
 //Attach Pitching Later
 
 public class RottenCheese extends OpMode {
@@ -68,15 +68,15 @@ public class RottenCheese extends OpMode {
         // Claw Changing Gamebinds
 
         Mercurial.gamepad1().circle().onTrue(
-          SampleManipulator.INSTANCE.rotateClawForwards()
+          OLDINTAKE.INSTANCE.rotateClawForwards()
         );
 
         Mercurial.gamepad1().square().onTrue(
-          SampleManipulator.INSTANCE.rotateClawBackwards()
+          OLDINTAKE.INSTANCE.rotateClawBackwards()
         );
 
         Mercurial.gamepad1().options().onTrue(
-                SampleManipulator.INSTANCE.toggleClaw()
+                OLDINTAKE.INSTANCE.toggleClaw()
         );
 
         // Wrist Changing Gamebinds

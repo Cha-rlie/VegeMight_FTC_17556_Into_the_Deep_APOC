@@ -71,10 +71,8 @@ public class Drivetrain extends SDKSubsystem {
         //follower = new Follower(FeatureRegistrar.getActiveOpMode().hardwareMap);
 
         //if (FeatureRegistrar.getActiveOpModeWrapper().getOpModeType() == OpModeMeta.Flavor.AUTONOMOUS)
-
         setDefaultCommand(new Parallel(drive(), updateVelocityAdjuster()));
         getTelemetry().addLine("Drivetrain Initialised");
-
     }
 
     @Override
@@ -110,6 +108,8 @@ public class Drivetrain extends SDKSubsystem {
     public static double getVelocityAdjuster() {
         return INSTANCE.velocityAdjuster;
     }
+
+    // Either Hashmap or remake when new dt :D
 
     @NonNull
     public static Lambda updateVelocityAdjuster() {

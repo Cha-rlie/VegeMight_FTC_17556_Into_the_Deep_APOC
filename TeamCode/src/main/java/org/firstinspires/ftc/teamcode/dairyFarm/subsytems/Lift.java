@@ -47,7 +47,6 @@ public class Lift extends SDKSubsystem {
 
         initialiseLiftMotors();
         setDefaultCommand(goToPosition());
-
     }
 
     @Override
@@ -56,6 +55,14 @@ public class Lift extends SDKSubsystem {
     }
 
     // TODO: FORCE IT DOWN TO START FROM CONSISTENT POSITION
+
+    @NonNull
+    public Lambda forceDown() {
+        return new Lambda("Force Down")
+            .addExecute(()->{
+                // Figure this out
+            });
+    }
     @NonNull
     public Lambda initialiseLiftMotors() {
         return new Lambda("Stop All Motors")

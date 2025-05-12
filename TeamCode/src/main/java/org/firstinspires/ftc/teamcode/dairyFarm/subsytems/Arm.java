@@ -20,6 +20,7 @@ import dev.frozenmilk.dairy.core.dependency.annotation.SingleAnnotations;
 import dev.frozenmilk.dairy.core.wrapper.Wrapper;
 import dev.frozenmilk.mercurial.commands.Command;
 import dev.frozenmilk.mercurial.commands.Lambda;
+import dev.frozenmilk.mercurial.commands.groups.Parallel;
 import dev.frozenmilk.mercurial.subsystems.SDKSubsystem;
 import dev.frozenmilk.mercurial.subsystems.Subsystem;
 import dev.frozenmilk.util.cell.Cell;
@@ -32,6 +33,8 @@ public class Arm extends SDKSubsystem {
 
     public final Cell<CachingServo> leftArm = subsystemCell(() -> new CachingServo(getHardwareMap().get(Servo.class, "leftArm")));
     public final Cell<CachingServo> rightArm = subsystemCell(() -> new CachingServo(getHardwareMap().get(Servo.class, "rightArm")));
+    public static double armPosition = 0;
+    public double adjustment = 0;
 
     private HashMap<Object, Command> stateToCommandMap;
 
@@ -39,36 +42,36 @@ public class Arm extends SDKSubsystem {
         //HASHMAP OF POSITIONS
         stateToCommandMap = new HashMap<Object, Command>() {{
             put(RobotState.IDLE, new Lambda("IDLE ARM").addExecute(() -> {
-                leftArm.get().setPosition(0);
-                rightArm.get().setPosition(0);
+                armPosition=0;
+                adjustment=0;
             }));
             put(RobotState.DEPOSIT, new Lambda("DEPOSIT ARM").addExecute(() -> {
-                leftArm.get().setPosition(0.237);
-                rightArm.get().setPosition(0.237);
+                armPosition=0;
+                adjustment=0;
             }));
             put(RobotState.HOVERBEFOREGRAB, new Lambda("HBG ARM").addExecute(() -> {
-                leftArm.get().setPosition(0.4942);
-                rightArm.get().setPosition(0.4942);
+                armPosition=0;
+                adjustment=0;
             }));
             put(RobotState.GRAB, new Lambda("GRAB ARM").addExecute(() -> {
-                leftArm.get().setPosition(0.5723);
-                rightArm.get().setPosition(0.5723);
+                armPosition=0;
+                adjustment=0;
             }));
             put(RobotState.HOVERAFTERGRAB, new Lambda("HAG ARM").addExecute(() -> {
-                leftArm.get().setPosition(0.4942);
-                rightArm.get().setPosition(0.4942);
+                armPosition=0;
+                adjustment=0;
             }));
             put(RobotState.SPECHOVER, new Lambda("INTAKE SPECIMEN ARM").addExecute(() -> {
-                leftArm.get().setPosition(0.4929);
-                rightArm.get().setPosition(0.4929);
+                armPosition=0;
+                adjustment=0;
             }));
             put(RobotState.SPECGRAB, new Lambda("INTAKE SPECIMEN ARM").addExecute(() -> {
-                leftArm.get().setPosition(0.4929);
-                rightArm.get().setPosition(0.4929);
+                armPosition=0;
+                adjustment=0;
             }));
             put(RobotState.DEPOSITSPECIMEN,new Lambda("DEPOSIT SPECIMEN ARM").addExecute(() -> {
-                leftArm.get().setPosition(0);
-                rightArm.get().setPosition(0);
+                armPosition=0;
+                adjustment=0;
             }));
             put(RobotState.PARKASCENT, new Lambda("PARK ASCENT ARM").addExecute(() -> {
                 //This doesn't exist rn
@@ -93,9 +96,14 @@ public class Arm extends SDKSubsystem {
         return new Lambda("TurnArm")
         .addRequirements(INSTANCE)
         .addExecute(() -> {
-            if (Globals.updateRobotStateTrue == true) {
-                new Lambda("Run Change State for Arm").addExecute(() -> stateToCommandMap.get(Globals.getRobotState()));
-            }
+            new Parallel(
+                new Lambda("TurnArm").addExecute(()-> {
+                    if (Globals.updateRobotStateTrue == true) {
+                        new Lambda("Run Change State for Arm").addExecute(() -> stateToCommandMap.get(Globals.getRobotState()));
+                    }
+                    rightArm.get().setPosition(armPosition+adjustment);
+                    leftArm.get().setPosition(armPosition+adjustment);
+                }));
         });
     }
 
@@ -103,8 +111,7 @@ public class Arm extends SDKSubsystem {
     public Lambda adjustArmUp() {
         return new Lambda("adjust wrist")
                 .addExecute(()-> {
-                    leftArm.get().setPosition(leftArm.get().getPosition()+0.01);
-                    rightArm.get().setPosition(rightArm.get().getPosition()+0.01);
+                    new Lambda("changeAdjustment").addExecute(()->adjustment=adjustment+0.01);
                     getTelemetry().addLine("Arm Adjusted");
                     getTelemetry().update();
                 });
@@ -114,8 +121,7 @@ public class Arm extends SDKSubsystem {
     public Lambda adjustArmDown() {
         return new Lambda("adjust wrist")
                 .addExecute(()-> {
-                    leftArm.get().setPosition(leftArm.get().getPosition()-0.01);
-                    rightArm.get().setPosition(rightArm.get().getPosition()-0.01);
+                    new Lambda("changeAdjustment").addExecute(()->adjustment=adjustment-0.01);
                     getTelemetry().addLine("Arm Adjusted");
                 });
     }
@@ -124,7 +130,7 @@ public class Arm extends SDKSubsystem {
     public Lambda resetAdjustment() {
         return new Lambda("reset adjustment")
                 .addExecute(() -> {
-                    // CHANGE ADJUSTMENT
+                    new Lambda("resetAdjustment").addExecute(()->adjustment=0);
                     getTelemetry().addLine("Arm Adjustment Reset");
                 });
     }

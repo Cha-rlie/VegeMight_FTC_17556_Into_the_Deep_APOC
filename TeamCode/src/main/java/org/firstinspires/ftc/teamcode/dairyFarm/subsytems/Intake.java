@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.dairyFarm.subsytems;
 
 import androidx.annotation.NonNull;
 
-import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
@@ -17,14 +16,13 @@ import dev.frozenmilk.dairy.core.dependency.Dependency;
 import dev.frozenmilk.dairy.core.dependency.annotation.SingleAnnotations;
 import dev.frozenmilk.dairy.core.wrapper.Wrapper;
 import dev.frozenmilk.mercurial.commands.Lambda;
-import dev.frozenmilk.mercurial.commands.groups.Parallel;
 import dev.frozenmilk.mercurial.subsystems.SDKSubsystem;
 import dev.frozenmilk.mercurial.subsystems.Subsystem;
 import dev.frozenmilk.util.cell.Cell;
 import kotlin.annotation.MustBeDocumented;
 
-public class SampleManipulator2 extends SDKSubsystem {
-    public static final SampleManipulator2 INSTANCE = new SampleManipulator2();
+public class Intake extends SDKSubsystem {
+    public static final Intake INSTANCE = new Intake();
 
     private final Cell<CachingCRServo> intakeServo = subsystemCell(() -> new CachingCRServo(getHardwareMap().get(CRServo.class, "sampleManipulator")));
 
@@ -58,7 +56,7 @@ public class SampleManipulator2 extends SDKSubsystem {
     }
 
     @NonNull
-    public Lambda toggleClaw() {
+    public Lambda toggleIntake() {
         return new Lambda ("Toggle Intake")
                 .addExecute(()-> {
                     if (intakeIsTrue == true) {
@@ -78,7 +76,7 @@ public class SampleManipulator2 extends SDKSubsystem {
 
     public @interface Attach{}
 
-    private Dependency<?> dependency = Subsystem.DEFAULT_DEPENDENCY.and(new SingleAnnotations<>(SampleManipulator2.Attach.class));
+    private Dependency<?> dependency = Subsystem.DEFAULT_DEPENDENCY.and(new SingleAnnotations<>(Intake.Attach.class));
 
     @NonNull
     @Override
