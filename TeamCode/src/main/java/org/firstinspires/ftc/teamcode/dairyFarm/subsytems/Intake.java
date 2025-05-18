@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
@@ -12,10 +13,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import dev.frozenmilk.dairy.cachinghardware.CachingCRServo;
+import dev.frozenmilk.dairy.cachinghardware.CachingServo;
 import dev.frozenmilk.dairy.core.dependency.Dependency;
 import dev.frozenmilk.dairy.core.dependency.annotation.SingleAnnotations;
 import dev.frozenmilk.dairy.core.wrapper.Wrapper;
 import dev.frozenmilk.mercurial.commands.Lambda;
+import dev.frozenmilk.mercurial.commands.groups.Parallel;
 import dev.frozenmilk.mercurial.subsystems.SDKSubsystem;
 import dev.frozenmilk.mercurial.subsystems.Subsystem;
 import dev.frozenmilk.util.cell.Cell;
@@ -24,10 +27,12 @@ import kotlin.annotation.MustBeDocumented;
 public class Intake extends SDKSubsystem {
     public static final Intake INSTANCE = new Intake();
 
-    private final Cell<CachingCRServo> intakeServo = subsystemCell(() -> new CachingCRServo(getHardwareMap().get(CRServo.class, "sampleManipulator")));
+    private final Cell<CachingServo> intakeServo = subsystemCell(() -> new CachingServo(getHardwareMap().get(Servo.class, "sampleManipulator")));
 
     public static boolean intakeIsTrue = true;
     public static double speedOfRotation=1;
+
+    public Intake() {}
 
     @Override
     public void preUserInitHook(@NonNull Wrapper opMode) {
@@ -35,20 +40,36 @@ public class Intake extends SDKSubsystem {
         getTelemetry().addLine("Intake Initalising");
 
         setDefaultCommand(
-            turnClaw()
-        );
+            new Parallel(
+                //turnClaw(),
+                new Lambda("print name").addExecute(() -> getTelemetry().addData("Servo pos", intakeServo.get().getPosition()))
+            ));
 
+    }
+    public Lambda adjustClawForwards() {
+        return new Lambda ("TESTING")
+                .addExecute(()-> {
+                    intakeServo.get().setPosition(intakeServo.get().getPosition()+0.01);
+                    getTelemetry().addData("ServoPosition",intakeServo.get().getPosition());
+                });
+    }
+
+    public Lambda adjustClawBackwards() {
+        return new Lambda ("TESTING")
+                .addExecute(()-> {
+                    intakeServo.get().setPosition(intakeServo.get().getPosition()-0.01);
+                    getTelemetry().addData("ServoPosition",intakeServo.get().getPosition());
+                });
     }
 
     @NonNull
     public Lambda turnClaw() {
         return new Lambda ("Turn Intake")
                 .addExecute(()-> {
-                    intakeServo.get().setPower(speedOfRotation);
                     if (intakeIsTrue==true) {
-                        intakeServo.get().setDirection(DcMotorSimple.Direction.FORWARD);
+                        intakeServo.get().setPosition(0); // 0.77
                     } else {
-                        intakeServo.get().setDirection(DcMotorSimple.Direction.REVERSE);
+                        intakeServo.get().setPosition(1); // 0.52
                     }
                     getTelemetry().addLine("Intake Turning");
                     getTelemetry().update();

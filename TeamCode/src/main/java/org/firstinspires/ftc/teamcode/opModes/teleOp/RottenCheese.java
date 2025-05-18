@@ -22,13 +22,14 @@ import org.firstinspires.ftc.teamcode.dairyFarm.subsytems.Wrist;
 // Enables the scheduler
 @Mercurial.Attach
 // Add additional Subsystem attaches
-@Globals.Attach
+/*@Globals.Attach
 @Drivetrain.Attach
 @Flag.Attach
 @Lift.Attach
 @Wrist.Attach
 @Arm.Attach
-@OLDINTAKE.Attach
+@OLDINTAKE.Attach */
+@Arm.Attach
 //Attach Pitching Later
 
 public class RottenCheese extends OpMode {
