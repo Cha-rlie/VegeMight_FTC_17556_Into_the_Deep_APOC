@@ -67,9 +67,9 @@ public class Intake extends SDKSubsystem {
         return new Lambda ("Turn Intake")
                 .addExecute(()-> {
                     if (intakeIsTrue==true) {
-                        intakeServo.get().setPosition(0); // 0.77
+                        intakeServo.get().setPosition(0.77); // 0.77
                     } else {
-                        intakeServo.get().setPosition(1); // 0.52
+                        intakeServo.get().setPosition(0.52); // 0.52
                     }
                     getTelemetry().addLine("Intake Turning");
                     getTelemetry().update();

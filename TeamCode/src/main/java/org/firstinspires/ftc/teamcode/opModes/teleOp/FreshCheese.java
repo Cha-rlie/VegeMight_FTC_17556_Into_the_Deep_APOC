@@ -18,6 +18,8 @@ import dev.frozenmilk.mercurial.commands.groups.Parallel;
 @TeleOp(name="FreshCheese")
 @Config
 
+@Mercurial.Attach
+
 @Globals.Attach
 @Drivetrain.Attach
 @Intake.Attach
@@ -61,6 +63,8 @@ public class FreshCheese extends OpMode{
             Intake.INSTANCE.toggleIntake()
         );
 
+
+
         // Arm binds
         Mercurial.gamepad2().cross().onTrue(
             Arm.INSTANCE.adjustArmDown()
@@ -88,6 +92,14 @@ public class FreshCheese extends OpMode{
             Lift.INSTANCE.forceDown()
         );
 
+        Mercurial.gamepad1().dpadUp().onTrue(
+            Lift.INSTANCE.adjustUp()
+        );
+
+        Mercurial.gamepad1().dpadUp().onTrue(
+            Lift.INSTANCE.adjustDown()
+        );
+
         // Figure out Lift adjustment
 
 
@@ -104,12 +116,12 @@ public class FreshCheese extends OpMode{
         Quick rundown of Controls:
 
         Gamepad 1:
-        Left Joystick x: Movement
-        Left Joystick y: Movement
-        Right Joystick x: Movement
-        Right Joystick y: Movement
-        L1: Forwards State
-        R1: Backwards State
+        Left Joystick x: Movement ✅
+        Left Joystick y: Movement ✅
+        Right Joystick x: Movement ✅
+        Right Joystick y: Movement ✅
+        L1: Forwards State ✅
+        R1: Backwards State ✅
         L2: Toggle speed - slower
         R2: Toggle speed - faster
         L3:
@@ -118,13 +130,13 @@ public class FreshCheese extends OpMode{
         Cross:
         Square:
         Circle:
-        Options: Toggle intake
-        Guide: Reject
+        Options: Toggle intake ✅
+        Guide: Reject ✅
         Dpad Up:
         Dpad Down:
         Dpad Left: Swap Mode
         Dpad Right:
-        Touchpad: To IDLE
+        Touchpad: To IDLE ✅
         PS5:
 
         Gamepad 2:
@@ -138,14 +150,14 @@ public class FreshCheese extends OpMode{
         R2:
         L3: TBC - FORCED RESTART Back to IDLE w L1 and R3
         R3: TBC - FORCED RESTART Back to IDLE w L1 and L3
-        Triangle: Adjust Arm Up
-        Cross: Adjust Arm Down
+        Triangle: Adjust Arm Up ✅
+        Cross: Adjust Arm Down ✅
         Square:
         Circle:
         Options: Reset Arm
         Guide: Park Ascent (With Touchpad and With PS)
-        Dpad Up: Adjust Pitching up
-        Dpad Down: Adjust Pitching down
+        Dpad Up: Adjust Pitching up ✅
+        Dpad Down: Adjust Pitching down ✅
         Dpad Left: Park No Ascent
         Dpad Right:
         Touchpad: Park Ascent (With Guide and With PS)

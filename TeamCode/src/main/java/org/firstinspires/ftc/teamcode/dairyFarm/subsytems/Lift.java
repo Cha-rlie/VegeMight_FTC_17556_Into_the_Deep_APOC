@@ -33,6 +33,8 @@ public class Lift extends SDKSubsystem {
     private final Cell<CachingDcMotor> motorLiftL = subsystemCell(() -> new CachingDcMotor(getHardwareMap().get(DcMotorEx.class, "leftSpool")));
     private final Cell<CachingDcMotor> motorLiftR = subsystemCell(() -> new CachingDcMotor(getHardwareMap().get(DcMotorEx.class, "rightSpool")));
 
+    public static int RTP = 0;
+
     private Lift() {
     }
 
@@ -76,46 +78,25 @@ public class Lift extends SDKSubsystem {
     }
 
     @NonNull
-    public Lambda emergencyStopAllMotors() {
-        return new Lambda("Stop All Motors")
-                .addRequirements(INSTANCE)
-                .addExecute(() -> {
-                    motorLiftL.get().setPower(0);
-                    motorLiftR.get().setPower(0);
-                });
-    }
-
-    @NonNull
-    public Lambda specimenDepositSequence() {
-        return new Lambda ("Spec Deposit Sequence List")
-                .addExecute(()->{
-                   motorLiftL.get().setTargetPosition(600);
-                   motorLiftR.get().setTargetPosition(600);
-                   motorLiftL.get().setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                   motorLiftR.get().setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                });
-    }
-
-    @NonNull
     public Lambda goToPosition() {
         return new Lambda("ChangePosition")
                 .addRequirements(INSTANCE)
                 .addExecute(() -> {
-                    switch (Globals.INSTANCE.getRobotState()) {
-                        case IDLE:
-                            motorLiftL.get().setTargetPosition(0);
-                            motorLiftR.get().setTargetPosition(0);
-                            break;
-                        case DEPOSIT:
-                            motorLiftL.get().setTargetPosition(1700);
-                            motorLiftR.get().setTargetPosition(1700);
-                            break;
-                        default:
-                            motorLiftL.get().setTargetPosition(0);
-                            motorLiftR.get().setTargetPosition(0);
-                            break;
+                    if (Globals.isSampleModeTrue==true) {
+                        switch (Globals.INSTANCE.getRobotState()) {
+                            case IDLE:
+                                RTP = 0;
+                                break;
+                            case DEPOSIT:
+                                RTP = 1700;
+                                break;
+                            default:
+                                RTP = 0;
+                                break;
+                        }
                     }
-
+                    motorLiftL.get().setTargetPosition(RTP);
+                    motorLiftR.get().setTargetPosition(RTP);
                     motorLiftL.get().setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     motorLiftR.get().setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     getTelemetry().addLine("AM I RUNNING TO TELEMETRY PLS");
@@ -129,6 +110,22 @@ public class Lift extends SDKSubsystem {
                 });
     }
 
+    public Lambda adjustUp(){
+        return new Lambda("Lift Up")
+                .addExecute(()-> {
+                    if (RTP+50<1700 /*CHANGE THIS NUMBER*/)
+                    RTP=RTP+50;
+                });
+    }
+
+    public Lambda adjustDown(){
+        return new Lambda("Lift Up")
+                .addExecute(()-> {
+                    if (RTP-50>0){
+                        RTP=RTP-50;
+                    }
+                });
+    }
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.TYPE)
     @MustBeDocumented
