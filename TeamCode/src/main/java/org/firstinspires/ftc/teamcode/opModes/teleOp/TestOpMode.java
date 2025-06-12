@@ -17,14 +17,26 @@ import dev.frozenmilk.mercurial.Mercurial;
 
 
 public class TestOpMode extends OpMode {
+
+    public static double servoPos = 0.00;
+    public static int motorRTP = 700;
+
     @Override
     public void init() {
         Mercurial.gamepad1().triangle().onTrue(
-                Intake.INSTANCE.adjustClawForwards()
+                Testing.INSTANCE.adjustMotor(motorRTP)
         );
 
         Mercurial.gamepad1().cross().onTrue(
-                Intake.INSTANCE.adjustClawBackwards()
+                Testing.INSTANCE.adjustServo(servoPos)
+        );
+
+        Mercurial.gamepad1().square().onTrue(
+                Testing.INSTANCE.toggleMotor()
+        );
+
+        Mercurial.gamepad1().dpadUp().onTrue(
+
         );
 
         Mercurial.gamepad1().options().onTrue(
@@ -35,9 +47,6 @@ public class TestOpMode extends OpMode {
                 Testing.INSTANCE.saveState()
         );
 
-        Mercurial.gamepad1().rightBumper().onTrue(
-                Testing.INSTANCE.togglePos()
-        );
 
         telemetry.update();
     }

@@ -41,7 +41,7 @@ public class Intake extends SDKSubsystem {
 
         setDefaultCommand(
             new Parallel(
-                //turnClaw(),
+                turnClaw(),
                 new Lambda("print name").addExecute(() -> getTelemetry().addData("Servo pos", intakeServo.get().getPosition()))
             ));
 
