@@ -85,7 +85,7 @@ public class Drivetrain extends SDKSubsystem {
         return new Lambda("drive")
                 .addRequirements(INSTANCE)
                 .addExecute(() -> {
-                    double[] calculatedMotorSpeeds = MecanumDriveCalculator.calculateDriveSpeedsRobotCentric(Mercurial.gamepad1().leftStickX().state()*velocityAdjuster, Mercurial.gamepad1().leftStickY().state()*velocityAdjuster, Mercurial.gamepad1().rightStickX().state()*velocityAdjuster);
+                    double[] calculatedMotorSpeeds = MecanumDriveCalculator.calcluateDriveSpeedsRobotCentric(Mercurial.gamepad1().leftStickX().state()*velocityAdjuster, Mercurial.gamepad1().leftStickY().state()*velocityAdjuster, Mercurial.gamepad1().rightStickX().state()*velocityAdjuster,true);
                     motorFL.get().setPower(calculatedMotorSpeeds[0]);
                     motorFR.get().setPower(calculatedMotorSpeeds[1]);
                     motorBL.get().setPower(calculatedMotorSpeeds[2]);

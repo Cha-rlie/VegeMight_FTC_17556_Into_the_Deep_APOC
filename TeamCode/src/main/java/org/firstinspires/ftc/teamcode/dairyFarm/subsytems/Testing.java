@@ -56,6 +56,8 @@ public class Testing extends SDKSubsystem {
     public void preUserInitHook(@NonNull Wrapper opMode) {
         // Init sequence
         getTelemetry().addLine("Testing Initalising");
+        Testing3.get().resetDeviceConfigurationForOpMode();
+        Testing4.get().resetDeviceConfigurationForOpMode();
         Testing2.get().setDirection(Servo.Direction.REVERSE);
         Testing4.get().setDirection(DcMotorEx.Direction.REVERSE);
         Testing3.get().setTargetPosition(0);
@@ -105,26 +107,12 @@ public class Testing extends SDKSubsystem {
                     } else {
                         Testing3.get().setPower(1);
                         Testing4.get().setPower(1);
-                        Testing3.get().setTargetPosition(700);
-                        Testing4.get().setTargetPosition(700);
+                        Testing3.get().setTargetPosition(850);
+                        Testing4.get().setTargetPosition(850);
                         pos1true=true;
                     }
 
                     getTelemetry().addData("Motor Position",Testing3.get().getCurrentPosition());
-                });
-    }
-
-    @NonNull
-    public Lambda saveState(){
-        return new Lambda("Turn Motor")
-                .addExecute(()->{
-                    if(saveState==0) {
-                        motorPos1= Testing3.get().getCurrentPosition();
-                        saveState=1;
-                    } else {
-                        motorPos2= Testing3.get().getCurrentPosition();
-                        saveState=0;
-                    }
                 });
     }
 

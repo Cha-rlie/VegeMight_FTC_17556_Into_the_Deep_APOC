@@ -118,7 +118,7 @@ public class MecanumDriveCalculator extends CheeseRoll {
      * @param turnSpeed    the turn speed of the robot, derived from input
      * @param squareInputs Square joystick inputs for finer control
      */
-    public static double[] calculateDriveSpeedsRobotCentric(double strafeSpeed, double forwardSpeed, double turnSpeed, boolean squareInputs) {
+    public static double[] calcluateDriveSpeedsRobotCentric(double strafeSpeed, double forwardSpeed, double turnSpeed, boolean squareInputs) {
         strafeSpeed = squareInputs ? clipRange(squareInput(strafeSpeed)) : clipRange(strafeSpeed);
         forwardSpeed = squareInputs ? clipRange(squareInput(forwardSpeed)) : clipRange(forwardSpeed);
         turnSpeed = squareInputs ? clipRange(squareInput(turnSpeed)) : clipRange(turnSpeed);

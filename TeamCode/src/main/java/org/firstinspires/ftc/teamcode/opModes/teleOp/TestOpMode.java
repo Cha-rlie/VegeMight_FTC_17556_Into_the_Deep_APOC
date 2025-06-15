@@ -36,17 +36,12 @@ public class TestOpMode extends OpMode {
         );
 
         Mercurial.gamepad1().dpadUp().onTrue(
-
+                
         );
 
         Mercurial.gamepad1().options().onTrue(
                 Intake.INSTANCE.toggleIntake()
         );
-
-        Mercurial.gamepad1().ps().onTrue(
-                Testing.INSTANCE.saveState()
-        );
-
 
         telemetry.update();
     }

@@ -37,9 +37,9 @@ public class Pitching extends SDKSubsystem {
         stateToCommandMap = new HashMap<Object, Command>() {{
             put(RobotState.IDLE, new Lambda("IDLE WRIST").addExecute(() -> runToPos = 0));
             put(RobotState.DEPOSIT, new Lambda("DEPOSIT WRIST").addExecute(() -> runToPos = 0));
-            put(RobotState.HOVERBEFOREGRAB, new Lambda("HBG WRIST").addExecute(() -> runToPos = 800));
-            put(RobotState.GRAB, new Lambda("GRAB WRIST").addExecute(() -> runToPos = 800));
-            put(RobotState.HOVERAFTERGRAB, new Lambda("HAG WRIST").addExecute(() -> runToPos = 800));
+            put(RobotState.HOVERBEFOREGRAB, new Lambda("HBG WRIST").addExecute(() -> runToPos = 700));
+            put(RobotState.GRAB, new Lambda("GRAB WRIST").addExecute(() -> runToPos = 700));
+            put(RobotState.HOVERAFTERGRAB, new Lambda("HAG WRIST").addExecute(() -> runToPos = 700));
             put(RobotState.SPECHOVER, new Lambda("INTAKE SPECIMEN WRIST").addExecute(() -> runToPos = 0));
             put(RobotState.SPECGRAB, new Lambda("INTAKE SPECIMEN WRIST").addExecute(() -> runToPos = 0));
             put(RobotState.DEPOSITSPECIMEN, new Lambda("DEPOSIT SPECIMEN WRIST").addExecute(() -> runToPos = 0));
