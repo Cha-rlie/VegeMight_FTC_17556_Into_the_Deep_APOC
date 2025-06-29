@@ -29,7 +29,7 @@ import kotlin.annotation.MustBeDocumented;
 public class Pitching extends SDKSubsystem {
     public static final Pitching INSTANCE = new Pitching();
 
-    public final Cell<CachingDcMotorEx> pitchingMotor = subsystemCell(()-> new CachingDcMotorEx(getHardwareMap().get(DcMotorEx.class, "pitching")));
+    public final Cell<CachingDcMotorEx> pitchingMotor = subsystemCell(()-> new CachingDcMotorEx(getHardwareMap().get(DcMotorEx.class, "P")));
     private HashMap<Object, Command> stateToCommandMap;
     public int runToPos = 0;
 

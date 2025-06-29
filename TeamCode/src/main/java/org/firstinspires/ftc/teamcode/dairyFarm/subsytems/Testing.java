@@ -37,7 +37,7 @@ import kotlin.annotation.MustBeDocumented;
 
 
 public class Testing extends SDKSubsystem {
-    public static final Testing INSTANCE= new Testing();
+    public static final Testing INSTANCE = new Testing();
 
     public final Cell<CachingServo> Testing1 = subsystemCell(() -> new CachingServo(getHardwareMap().get(Servo.class, "tR"/*testingRight*/)));
     public final Cell<CachingServo> Testing2 = subsystemCell(() -> new CachingServo(getHardwareMap().get(Servo.class, "tL"/*testingLeft*/)));
@@ -56,14 +56,16 @@ public class Testing extends SDKSubsystem {
         getTelemetry().addLine("Testing Initalising");
         Testing3.get().resetDeviceConfigurationForOpMode();
         Testing4.get().resetDeviceConfigurationForOpMode();
-        Testing3.get().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        Testing4.get().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        Testing3.get().setTargetPositionTolerance(50);
+        Testing4.get().setTargetPositionTolerance(50);
         Testing3.get().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         Testing4.get().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         Testing2.get().setDirection(Servo.Direction.REVERSE);
         Testing3.get().setDirection(DcMotorEx.Direction.REVERSE);
         Testing3.get().setTargetPosition(300);
         Testing4.get().setTargetPosition(300);
+        Testing3.get().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        Testing4.get().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         Testing3.get().setPower(1);
         Testing4.get().setPower(1);
     }
@@ -96,6 +98,8 @@ public class Testing extends SDKSubsystem {
                 .addExecute(()->{
                     Testing3.get().setTargetPosition(motorRTP);
                     Testing4.get().setTargetPosition(motorRTP);
+                    Testing3.get().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+                    Testing4.get().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
                     Testing3.get().setPower(1);
                     Testing4.get().setPower(1);
 
@@ -110,12 +114,16 @@ public class Testing extends SDKSubsystem {
                     if(pos1true) {
                         Testing3.get().setTargetPosition(0);
                         Testing4.get().setTargetPosition(0);
+                        Testing3.get().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+                        Testing4.get().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
                         Testing3.get().setPower(1);
                         Testing4.get().setPower(1);
                         pos1true=false;
                     } else {
                         Testing3.get().setTargetPosition(500);
                         Testing4.get().setTargetPosition(500);
+                        Testing3.get().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+                        Testing4.get().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
                         Testing3.get().setPower(1);
                         Testing4.get().setPower(1);
                         pos1true=true;

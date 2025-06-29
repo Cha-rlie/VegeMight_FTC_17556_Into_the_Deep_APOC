@@ -30,8 +30,8 @@ public class Lift extends SDKSubsystem {
 
     // Declare the motors and mecanum drive
     // @charlie please check motor names
-    private final Cell<CachingDcMotor> motorLiftL = subsystemCell(() -> new CachingDcMotor(getHardwareMap().get(DcMotorEx.class, "leftSpool")));
-    private final Cell<CachingDcMotor> motorLiftR = subsystemCell(() -> new CachingDcMotor(getHardwareMap().get(DcMotorEx.class, "rightSpool")));
+    private final Cell<CachingDcMotor> motorLiftL = subsystemCell(() -> new CachingDcMotor(getHardwareMap().get(DcMotorEx.class, "LS")));
+    private final Cell<CachingDcMotor> motorLiftR = subsystemCell(() -> new CachingDcMotor(getHardwareMap().get(DcMotorEx.class, "RS")));
 
     public static int RTP = 0;
 
