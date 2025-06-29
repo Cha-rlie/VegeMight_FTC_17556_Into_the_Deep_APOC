@@ -28,6 +28,7 @@ public class Globals extends SDKSubsystem {
     public static final Globals INSTANCE = new Globals();
     public static boolean isSampleModeTrue = true;
     public static boolean updateRobotStateTrue = false;
+    public static boolean isLiftDown = false;
 
     // Declare the global variables
     private OpModeLazyCell<RobotState> robotState = new OpModeLazyCell<>(() -> RobotState.IDLE);

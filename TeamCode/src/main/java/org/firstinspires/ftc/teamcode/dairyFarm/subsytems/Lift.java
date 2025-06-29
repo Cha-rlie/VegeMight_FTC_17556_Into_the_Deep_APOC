@@ -113,8 +113,9 @@ public class Lift extends SDKSubsystem {
     public Lambda adjustUp(){
         return new Lambda("Lift Up")
                 .addExecute(()-> {
-                    if (RTP+50<1700 /*CHANGE THIS NUMBER*/)
-                    RTP=RTP+50;
+                    if (RTP+50<1700 /*CHANGE THIS NUMBER*/) {
+                        RTP = RTP + 50;
+                    }
                 });
     }
 
