@@ -19,7 +19,7 @@ import dev.frozenmilk.mercurial.Mercurial;
 public class TestOpMode extends OpMode {
 
     public static double servoPos = 0.00;
-    public static int motorRTP = 700;
+    public static int motorRTP = 100;
 
     @Override
     public void init() {
@@ -42,8 +42,6 @@ public class TestOpMode extends OpMode {
         Mercurial.gamepad1().options().onTrue(
                 Intake.INSTANCE.toggleIntake()
         );
-
-        telemetry.update();
     }
 
     @Override

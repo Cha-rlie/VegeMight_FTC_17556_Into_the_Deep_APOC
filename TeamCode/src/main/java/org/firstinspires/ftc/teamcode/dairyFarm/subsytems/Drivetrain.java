@@ -35,10 +35,10 @@ public class Drivetrain extends SDKSubsystem {
     public static final Drivetrain INSTANCE = new Drivetrain();
 
     // Declare the motors and mecanum drive
-    private final Cell<CachingDcMotor> motorFL = subsystemCell(() -> new CachingDcMotor(getHardwareMap().get(DcMotorEx.class, "frontL")));
-    private final Cell<CachingDcMotor> motorFR = subsystemCell(() -> new CachingDcMotor(getHardwareMap().get(DcMotorEx.class, "frontR")));
-    private final Cell<CachingDcMotor> motorBL = subsystemCell(() -> new CachingDcMotor(getHardwareMap().get(DcMotorEx.class, "backL")));
-    private final Cell<CachingDcMotor> motorBR = subsystemCell(() -> new CachingDcMotor(getHardwareMap().get(DcMotorEx.class, "backR")));
+    private final Cell<CachingDcMotor> motorFL = subsystemCell(() -> new CachingDcMotor(getHardwareMap().get(DcMotorEx.class, "FL")));
+    private final Cell<CachingDcMotor> motorFR = subsystemCell(() -> new CachingDcMotor(getHardwareMap().get(DcMotorEx.class, "FR")));
+    private final Cell<CachingDcMotor> motorBL = subsystemCell(() -> new CachingDcMotor(getHardwareMap().get(DcMotorEx.class, "BL")));
+    private final Cell<CachingDcMotor> motorBR = subsystemCell(() -> new CachingDcMotor(getHardwareMap().get(DcMotorEx.class, "BR")));
 
     private static double velocityAdjuster;
 

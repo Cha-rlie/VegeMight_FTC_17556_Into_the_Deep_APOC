@@ -45,9 +45,7 @@ public class Testing extends SDKSubsystem {
     public final Cell<CachingDcMotorEx> Testing4 = subsystemCell(()-> new CachingDcMotorEx(getHardwareMap().get(DcMotorEx.class, "tLM")/*testingLeftMotor*/));
 
 
-    public int motorPos1=0;
-    public int motorPos2=750;
-    public int saveState=0;
+
     public boolean pos1true = true;
     public boolean servopos1true = true;
     public Testing() {}
@@ -58,19 +56,28 @@ public class Testing extends SDKSubsystem {
         getTelemetry().addLine("Testing Initalising");
         Testing3.get().resetDeviceConfigurationForOpMode();
         Testing4.get().resetDeviceConfigurationForOpMode();
-        Testing2.get().setDirection(Servo.Direction.REVERSE);
-        Testing4.get().setDirection(DcMotorEx.Direction.REVERSE);
-        Testing3.get().setTargetPosition(0);
-        Testing4.get().setTargetPosition(0);
-        Testing3.get().setPower(1);
-        Testing4.get().setPower(1);
         Testing3.get().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         Testing4.get().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        Testing3.get().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        Testing4.get().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        Testing2.get().setDirection(Servo.Direction.REVERSE);
+        Testing3.get().setDirection(DcMotorEx.Direction.REVERSE);
+        Testing3.get().setTargetPosition(300);
+        Testing4.get().setTargetPosition(300);
+        Testing3.get().setPower(1);
+        Testing4.get().setPower(1);
+    }
+    @Override
+    public void preUserLoopHook(@NonNull Wrapper opMode) {
+        getTelemetry().addData("Motor Position",Testing3.get().getCurrentPosition());
+        getTelemetry().addData("Motor Position",Testing3.get().getTargetPosition());
+        getTelemetry().addData("Motor Position",Testing3.get().getPower());
     }
 
     @NonNull
     public Lambda adjustServo(double Adjustment){
         return new Lambda("Turn Servo")
+                .addRequirements(INSTANCE)
                 .addExecute(()-> {
                     if(servopos1true) {
                         Testing1.get().setPosition(0.2);
@@ -85,11 +92,12 @@ public class Testing extends SDKSubsystem {
     @NonNull
     public Lambda adjustMotor(int motorRTP){
         return new Lambda("Turn Motor")
+                .addRequirements(INSTANCE)
                 .addExecute(()->{
-                   Testing3.get().setPower(1);
-                   Testing4.get().setPower(1);
-                   Testing3.get().setTargetPosition(motorRTP);
-                   Testing4.get().setTargetPosition(motorRTP);
+                    Testing3.get().setTargetPosition(motorRTP);
+                    Testing4.get().setTargetPosition(motorRTP);
+                    Testing3.get().setPower(1);
+                    Testing4.get().setPower(1);
 
                    getTelemetry().addData("Motor Position",Testing3.get().getCurrentPosition());
                 });
@@ -97,18 +105,19 @@ public class Testing extends SDKSubsystem {
     @NonNull
     public Lambda toggleMotor(){
         return new Lambda("Turn Motor")
+                .addRequirements(INSTANCE)
                 .addExecute(()->{
                     if(pos1true) {
-                        Testing3.get().setPower(1);
-                        Testing4.get().setPower(1);
                         Testing3.get().setTargetPosition(0);
                         Testing4.get().setTargetPosition(0);
-                        pos1true=false;
-                    } else {
                         Testing3.get().setPower(1);
                         Testing4.get().setPower(1);
-                        Testing3.get().setTargetPosition(850);
-                        Testing4.get().setTargetPosition(850);
+                        pos1true=false;
+                    } else {
+                        Testing3.get().setTargetPosition(500);
+                        Testing4.get().setTargetPosition(500);
+                        Testing3.get().setPower(1);
+                        Testing4.get().setPower(1);
                         pos1true=true;
                     }
 
