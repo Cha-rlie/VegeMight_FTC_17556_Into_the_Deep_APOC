@@ -57,12 +57,13 @@ public class Pitching extends SDKSubsystem {
         pitchingMotor.get().setTargetPosition(0);
         pitchingMotor.get().setMode(DcMotor.RunMode.RUN_TO_POSITION);
         pitchingMotor.get().setPower(1);
+        setDefaultCommand(turnPitching());
     }
 
     @Override
     public void preUserLoopHook(@NonNull Wrapper opMode) {
-        turnPitching();
-        getTelemetry().addData("Pitch Pos", pitchingMotor.get().getCurrentPosition());
+        getTelemetry().addData("Pitch Position", pitchingMotor.get().getCurrentPosition());
+        getTelemetry().addData("Pitching RTP",runToPos);
     }
 
     @NonNull
@@ -74,6 +75,8 @@ public class Pitching extends SDKSubsystem {
                         new Lambda("Run Change State for Wrist").addExecute(() -> stateToCommandMap.get(Globals.getRobotState()));
                     }
                     pitchingMotor.get().setTargetPosition(runToPos);
+                    pitchingMotor.get().setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    pitchingMotor.get().setPower(1);
                 });
     }
 
@@ -81,7 +84,7 @@ public class Pitching extends SDKSubsystem {
     public Lambda adjustPitchingUp(){
         return new Lambda("Adjust Pitching")
                 .addExecute(()-> {
-                    runToPos=runToPos+10;
+                    runToPos=runToPos+50;
                 });
 
     }
@@ -90,7 +93,7 @@ public class Pitching extends SDKSubsystem {
     public Lambda adjustPitchingDown(){
         return new Lambda("Adjust Pitching")
                 .addExecute(()-> {
-                    runToPos=runToPos-10;
+                    runToPos=runToPos-50;
                 });
 
     }

@@ -10,11 +10,7 @@ import dev.frozenmilk.mercurial.commands.groups.Parallel;
 import org.firstinspires.ftc.teamcode.camembert.cheeseFactory.Globals;
 import org.firstinspires.ftc.teamcode.camembert.cheeseFactory.RobotState;
 import org.firstinspires.ftc.teamcode.dairyFarm.subsytems.Arm;
-import org.firstinspires.ftc.teamcode.dairyFarm.subsytems.Drivetrain;
-import org.firstinspires.ftc.teamcode.dairyFarm.subsytems.Flag;
-import org.firstinspires.ftc.teamcode.dairyFarm.subsytems.Lift;
 import org.firstinspires.ftc.teamcode.dairyFarm.subsytems.OLDINTAKE;
-import org.firstinspires.ftc.teamcode.dairyFarm.subsytems.Wrist;
 
 // Sets this class as a TeleOp
 @TeleOp(name="RottenCheese")
@@ -82,12 +78,6 @@ public class RottenCheese extends OpMode {
 
         // Wrist Changing Gamebinds
 
-        Mercurial.gamepad2().dpadDown().onTrue(
-                Wrist.INSTANCE.adjustWristDown()
-        );
-        Mercurial.gamepad2().dpadUp().onTrue(
-                Wrist.INSTANCE.adjustWristUp()
-        );
 
 
         // Arm Changing Gamebinds

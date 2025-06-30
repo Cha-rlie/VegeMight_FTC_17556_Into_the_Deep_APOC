@@ -80,6 +80,7 @@ public class Arm extends SDKSubsystem {
                 // Yeah nah not doing this
             }));
         }};
+
     }
 
     @Override
@@ -87,7 +88,6 @@ public class Arm extends SDKSubsystem {
         // Init sequence
         getTelemetry().addLine("Arm Initalising");
         leftArm.get().setDirection(Servo.Direction.REVERSE);
-
         setDefaultCommand(turnArm());
     }
 

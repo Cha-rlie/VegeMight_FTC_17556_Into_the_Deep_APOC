@@ -66,8 +66,8 @@ public class Lift extends SDKSubsystem {
 
     @Override
     public void preUserLoopHook(@NonNull Wrapper opMode) {
-        getTelemetry().addData("RTP", RTP);
-        getTelemetry().addData("Left Motor Target Position", motorLiftL.get().getTargetPosition());
+        getTelemetry().addData("Lift RTP", RTP);
+        getTelemetry().addData("Lift Target Position", motorLiftL.get().getTargetPosition());
     }
 
     // TODO: FORCE IT DOWN TO START FROM CONSISTENT POSITION
