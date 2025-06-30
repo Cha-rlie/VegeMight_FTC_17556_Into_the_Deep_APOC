@@ -41,8 +41,8 @@ public class Testing extends SDKSubsystem {
 
     public final Cell<CachingServo> Testing1 = subsystemCell(() -> new CachingServo(getHardwareMap().get(Servo.class, "LA"/*testingRight*/)));
     public final Cell<CachingServo> Testing2 = subsystemCell(() -> new CachingServo(getHardwareMap().get(Servo.class, "RA"/*testingLeft*/)));
-    public final Cell<CachingDcMotorEx> Testing3 = subsystemCell(()->new CachingDcMotorEx(getHardwareMap().get(DcMotorEx.class, "tRM")/*testingRightMotor*/));
-    public final Cell<CachingDcMotorEx> Testing4 = subsystemCell(()-> new CachingDcMotorEx(getHardwareMap().get(DcMotorEx.class, "tLM")/*testingLeftMotor*/));
+    public final Cell<CachingDcMotorEx> Testing3 = subsystemCell(()->new CachingDcMotorEx(getHardwareMap().get(DcMotorEx.class, "LS")/*testingRightMotor*/));
+    public final Cell<CachingDcMotorEx> Testing4 = subsystemCell(()-> new CachingDcMotorEx(getHardwareMap().get(DcMotorEx.class, "RS")/*testingLeftMotor*/));
 
     private int position;
 
@@ -62,9 +62,9 @@ public class Testing extends SDKSubsystem {
         Testing3.get().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         Testing4.get().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         Testing2.get().setDirection(Servo.Direction.REVERSE);
-        Testing3.get().setDirection(DcMotorEx.Direction.REVERSE);
-        Testing3.get().setTargetPosition(1000);
-        Testing4.get().setTargetPosition(1000);
+        Testing4.get().setDirection(DcMotorEx.Direction.REVERSE);
+        Testing3.get().setTargetPosition(0);
+        Testing4.get().setTargetPosition(0);
         Testing3.get().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         Testing4.get().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         Testing3.get().setPower(1);
@@ -75,6 +75,8 @@ public class Testing extends SDKSubsystem {
         getTelemetry().addData("Motor Position",Testing3.get().getCurrentPosition());
         getTelemetry().addData("Motor Position",Testing3.get().getTargetPosition());
         getTelemetry().addData("Motor Position",Testing3.get().getPower());
+        getTelemetry().addData("Servo Position",Testing1.get().getPosition());
+        getTelemetry().addData("Servo Position",Testing2.get().getPosition());
     }
 
     @NonNull
@@ -83,12 +85,35 @@ public class Testing extends SDKSubsystem {
                 .addRequirements(INSTANCE)
                 .addExecute(()-> {
                     if(servopos1true) {
-                        Testing1.get().setPosition(0.2);
+                        Testing1.get().setPosition(0);
+                        Testing2.get().setPosition(0);
                         servopos1true=false;
                     } else {
-                        Testing1.get().setPosition(0.4);
+                        Testing1.get().setPosition(1);
+                        Testing2.get().setPosition(1);
                         servopos1true=true;
                     }
+                    getTelemetry().addData("Servo Position",Testing1.get().getPosition());
+                });
+    }
+
+    @NonNull
+    public Lambda incrementServo(){
+        return new Lambda("increment motor")
+                .addRequirements(INSTANCE)
+                .addExecute(()->{
+                    Testing1.get().setPosition(Testing1.get().getPosition()+0.05);
+                    Testing2.get().setPosition(Testing2.get().getPosition()+0.05);
+                });
+    }
+
+    @NonNull
+    public Lambda incrementServoBack(){
+        return new Lambda("increment motor")
+                .addRequirements(INSTANCE)
+                .addExecute(()->{
+                    Testing1.get().setPosition(Testing1.get().getPosition()-0.05);
+                    Testing2.get().setPosition(Testing2.get().getPosition()-0.05);
                 });
     }
 

@@ -63,8 +63,6 @@ public class FreshCheese extends OpMode{
             Intake.INSTANCE.toggleIntake()
         );
 
-
-
         // Arm binds
         Mercurial.gamepad2().cross().onTrue(
             Arm.INSTANCE.adjustArmDown()
@@ -92,16 +90,14 @@ public class FreshCheese extends OpMode{
             Lift.INSTANCE.forceDown()
         );
 
+        // Lift adjustment
         Mercurial.gamepad1().dpadUp().onTrue(
             Lift.INSTANCE.adjustUp()
         );
 
-        Mercurial.gamepad1().dpadUp().onTrue(
+        Mercurial.gamepad1().dpadDown().onTrue(
             Lift.INSTANCE.adjustDown()
         );
-
-        // Figure out Lift adjustment
-
 
         // Park binds
         Mercurial.gamepad2().touchpad().and(Mercurial.gamepad2().guide().and(Mercurial.gamepad2().ps())).onTrue(
@@ -170,6 +166,6 @@ public class FreshCheese extends OpMode{
 
     @Override
     public void loop() {
-
+        telemetry.update();
     }
 }

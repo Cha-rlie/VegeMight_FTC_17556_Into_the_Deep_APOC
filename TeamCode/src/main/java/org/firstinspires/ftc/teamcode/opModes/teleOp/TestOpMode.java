@@ -49,6 +49,14 @@ public class TestOpMode extends OpMode {
         Mercurial.gamepad1().dpadDown().onTrue(
                 Testing.INSTANCE.incrementMotorDown()
         );
+
+        Mercurial.gamepad1().dpadRight().onTrue(
+                Testing.INSTANCE.incrementServo()
+        );
+
+        Mercurial.gamepad1().dpadLeft().onTrue(
+                Testing.INSTANCE.incrementServoBack()
+        );
     }
 
     @Override

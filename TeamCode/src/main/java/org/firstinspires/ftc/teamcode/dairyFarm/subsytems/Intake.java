@@ -27,7 +27,7 @@ import kotlin.annotation.MustBeDocumented;
 public class Intake extends SDKSubsystem {
     public static final Intake INSTANCE = new Intake();
 
-    private final Cell<CachingServo> intakeServo = subsystemCell(() -> new CachingServo(getHardwareMap().get(Servo.class, "sampleManipulator")));
+    private final Cell<CachingServo> intakeServo = subsystemCell(() -> new CachingServo(getHardwareMap().get(Servo.class, "SM")));
 
     public static boolean intakeIsTrue = true;
     public static double speedOfRotation=1;

@@ -52,10 +52,17 @@ public class Pitching extends SDKSubsystem {
     @Override
     public void preUserInitHook(@NonNull Wrapper opMode) {
         getTelemetry().addLine("Pitching Initalising");
+        pitchingMotor.get().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        pitchingMotor.get().setTargetPositionTolerance(50);
         pitchingMotor.get().setTargetPosition(0);
-        pitchingMotor.get().setPower(1);
         pitchingMotor.get().setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        setDefaultCommand(turnPitching());
+        pitchingMotor.get().setPower(1);
+    }
+
+    @Override
+    public void preUserLoopHook(@NonNull Wrapper opMode) {
+        turnPitching();
+        getTelemetry().addData("Pitch Pos", pitchingMotor.get().getCurrentPosition());
     }
 
     @NonNull

@@ -14,9 +14,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import dev.frozenmilk.dairy.cachinghardware.CachingDcMotorEx;
 import dev.frozenmilk.dairy.core.dependency.Dependency;
 import dev.frozenmilk.dairy.core.dependency.annotation.SingleAnnotations;
 import dev.frozenmilk.dairy.core.wrapper.Wrapper;
+import dev.frozenmilk.mercurial.commands.Command;
 import dev.frozenmilk.mercurial.commands.Lambda;
 import dev.frozenmilk.mercurial.subsystems.SDKSubsystem;
 import dev.frozenmilk.mercurial.subsystems.Subsystem;
@@ -32,10 +34,10 @@ public class Lift extends SDKSubsystem {
     // @charlie please check motor names
     //Low basket - 400
     // Max extension for intake - 800
-    private final Cell<CachingDcMotor> motorLiftL = subsystemCell(() -> new CachingDcMotor(getHardwareMap().get(DcMotorEx.class, "LS")));
-    private final Cell<CachingDcMotor> motorLiftR = subsystemCell(() -> new CachingDcMotor(getHardwareMap().get(DcMotorEx.class, "RS")));
+    public final Cell<CachingDcMotorEx> motorLiftL = subsystemCell(() -> new CachingDcMotorEx(getHardwareMap().get(DcMotorEx.class, "LS")));
+    public final Cell<CachingDcMotorEx> motorLiftR = subsystemCell(() -> new CachingDcMotorEx(getHardwareMap().get(DcMotorEx.class, "RS")));
 
-    public static int RTP = 0;
+    public static int RTP;
 
     private Lift() {
     }
@@ -43,18 +45,28 @@ public class Lift extends SDKSubsystem {
     @Override
     public void preUserInitHook(@NonNull Wrapper opMode) {
         // Init sequence
+        RTP = 0;
         getTelemetry().addLine("Slides Initalising");
-
-        motorLiftL.get().setDirection(DcMotorSimple.Direction.REVERSE);
+        motorLiftL.get().resetDeviceConfigurationForOpMode();
+        motorLiftR.get().resetDeviceConfigurationForOpMode();
+        motorLiftR.get().setDirection(DcMotorSimple.Direction.REVERSE);
         motorLiftR.get().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorLiftL.get().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        initialiseLiftMotors();
+        motorLiftL.get().setTargetPositionTolerance(50);
+        motorLiftL.get().setTargetPositionTolerance(50);
+        motorLiftL.get().setTargetPosition(432);
+        motorLiftR.get().setTargetPosition(432);
+        motorLiftL.get().setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorLiftR.get().setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorLiftL.get().setPower(1);
+        motorLiftR.get().setPower(1);
         setDefaultCommand(goToPosition());
+        //initialiseLiftMotors();
     }
 
     @Override
     public void preUserLoopHook(@NonNull Wrapper opMode) {
+        getTelemetry().addData("RTP", RTP);
         getTelemetry().addData("Left Motor Target Position", motorLiftL.get().getTargetPosition());
     }
 
@@ -72,8 +84,8 @@ public class Lift extends SDKSubsystem {
         return new Lambda("Stop All Motors")
                 .addRequirements(INSTANCE)
                 .addExecute(() -> {
-                    motorLiftL.get().setTargetPosition(0);
-                    motorLiftR.get().setTargetPosition(0);
+                    motorLiftL.get().setTargetPosition(400);
+                    motorLiftR.get().setTargetPosition(400);
                     motorLiftL.get().setPower(1);
                     motorLiftR.get().setPower(1);
                 });
@@ -84,48 +96,56 @@ public class Lift extends SDKSubsystem {
         return new Lambda("ChangePosition")
                 .addRequirements(INSTANCE)
                 .addExecute(() -> {
-                    if (Globals.isSampleModeTrue==true) {
-                        switch (Globals.INSTANCE.getRobotState()) {
-                            case IDLE:
-                                RTP = 0;
-                                break;
-                            case DEPOSIT:
-                                RTP = 1300;
-                                break;
-                            default:
-                                RTP = 0;
-                                break;
-                        }
-                    }
                     motorLiftL.get().setTargetPosition(RTP);
                     motorLiftR.get().setTargetPosition(RTP);
                     motorLiftL.get().setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     motorLiftR.get().setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     getTelemetry().addLine("AM I RUNNING TO TELEMETRY PLS");
-                    if (motorLiftL.get().getCurrentPosition() > motorLiftL.get().getTargetPosition() + 50 && motorLiftL.get().getCurrentPosition() < motorLiftL.get().getTargetPosition() - 100) {
-                        motorLiftL.get().setPower(0);
-                        motorLiftR.get().setPower(0);
-                    } else {
-                        motorLiftL.get().setPower(0.7);
-                        motorLiftR.get().setPower(0.7);
-                    }
+                    motorLiftL.get().setPower(0.9);
+                    motorLiftR.get().setPower(0.9);
+                    if (Globals.updateRobotStateTrue) {updatePosFromState();}
                 });
     }
 
+    @NonNull
+    public Lambda updatePosFromState() {
+        return new Lambda("ChangeLiftPos")
+            .addRequirements(INSTANCE)
+            .addExecute(() -> {
+                if (Globals.isSampleModeTrue) {
+                    switch (Globals.INSTANCE.getRobotState()) {
+                        case IDLE:
+                            RTP = 0;
+                            break;
+                        case DEPOSIT:
+                            RTP = 1300;
+                            break;
+                        default:
+                            RTP = 0;
+                            break;
+                    }
+                }
+            });
+    }
+
+    @NonNull
     public Lambda adjustUp(){
         return new Lambda("Lift Up")
+                .addRequirements(INSTANCE)
                 .addExecute(()-> {
-                    if (RTP+50<1700 /*CHANGE THIS NUMBER*/) {
-                        RTP = RTP + 50;
+                    if (RTP+100<1500 /*CHANGE THIS NUMBER*/) {
+                        RTP = RTP + 100;
                     }
                 });
     }
 
+    @NonNull
     public Lambda adjustDown(){
-        return new Lambda("Lift Up")
+        return new Lambda("Lift Down")
+                .addRequirements(INSTANCE)
                 .addExecute(()-> {
-                    if (RTP-50>0){
-                        RTP=RTP-50;
+                    if (RTP-100>0){
+                        RTP=RTP-100;
                     }
                 });
     }

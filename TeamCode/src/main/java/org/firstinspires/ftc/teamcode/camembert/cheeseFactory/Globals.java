@@ -158,8 +158,6 @@ public class Globals extends SDKSubsystem {
                             if (Globals.updateRobotStateTrue == true) {
                                 new Lambda("Immmmm going back").addExecute(() -> goBackwardState.get(Globals.getRobotState()));
                             }
-                            new Wait(0.1);
-                            updateRobotStateTrue=false;
                         }
                 );
     }
@@ -223,6 +221,7 @@ public class Globals extends SDKSubsystem {
 
     @Override
     public void preUserLoopHook(@NonNull Wrapper opMode) {
+        updateRobotStateTrue = false;
         getTelemetry().addData("Robot State", INSTANCE.robotState.get());
         getTelemetry().addData("isSampleTrue", isSampleModeTrue);
     }

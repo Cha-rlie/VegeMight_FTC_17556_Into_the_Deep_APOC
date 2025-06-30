@@ -31,8 +31,8 @@ public class Arm extends SDKSubsystem {
 
     public static final Arm INSTANCE = new Arm();
 
-    public final Cell<CachingServo> leftArm = subsystemCell(() -> new CachingServo(getHardwareMap().get(Servo.class, "leftArm")));
-    public final Cell<CachingServo> rightArm = subsystemCell(() -> new CachingServo(getHardwareMap().get(Servo.class, "rightArm")));
+    public final Cell<CachingServo> leftArm = subsystemCell(() -> new CachingServo(getHardwareMap().get(Servo.class, "LA")));
+    public final Cell<CachingServo> rightArm = subsystemCell(() -> new CachingServo(getHardwareMap().get(Servo.class, "RA")));
     public static double armPosition = 0;
     public double adjustment = 0;
 
@@ -42,23 +42,23 @@ public class Arm extends SDKSubsystem {
         //HASHMAP OF POSITIONS
         stateToCommandMap = new HashMap<Object, Command>() {{
             put(RobotState.IDLE, new Lambda("IDLE ARM").addExecute(() -> {
-                armPosition=0;
+                armPosition=0.35;
                 adjustment=0;
             }));
             put(RobotState.DEPOSIT, new Lambda("DEPOSIT ARM").addExecute(() -> {
-                armPosition=0;
+                armPosition=0.25;
                 adjustment=0;
             }));
             put(RobotState.HOVERBEFOREGRAB, new Lambda("HBG ARM").addExecute(() -> {
-                armPosition=0;
+                armPosition=0.35;
                 adjustment=0;
             }));
             put(RobotState.GRAB, new Lambda("GRAB ARM").addExecute(() -> {
-                armPosition=0;
+                armPosition=0.5;
                 adjustment=0;
             }));
             put(RobotState.HOVERAFTERGRAB, new Lambda("HAG ARM").addExecute(() -> {
-                armPosition=0;
+                armPosition=0.35;
                 adjustment=0;
             }));
             put(RobotState.SPECHOVER, new Lambda("INTAKE SPECIMEN ARM").addExecute(() -> {
