@@ -39,12 +39,12 @@ import kotlin.annotation.MustBeDocumented;
 public class Testing extends SDKSubsystem {
     public static final Testing INSTANCE = new Testing();
 
-    public final Cell<CachingServo> Testing1 = subsystemCell(() -> new CachingServo(getHardwareMap().get(Servo.class, "tR"/*testingRight*/)));
-    public final Cell<CachingServo> Testing2 = subsystemCell(() -> new CachingServo(getHardwareMap().get(Servo.class, "tL"/*testingLeft*/)));
+    public final Cell<CachingServo> Testing1 = subsystemCell(() -> new CachingServo(getHardwareMap().get(Servo.class, "LA"/*testingRight*/)));
+    public final Cell<CachingServo> Testing2 = subsystemCell(() -> new CachingServo(getHardwareMap().get(Servo.class, "RA"/*testingLeft*/)));
     public final Cell<CachingDcMotorEx> Testing3 = subsystemCell(()->new CachingDcMotorEx(getHardwareMap().get(DcMotorEx.class, "tRM")/*testingRightMotor*/));
     public final Cell<CachingDcMotorEx> Testing4 = subsystemCell(()-> new CachingDcMotorEx(getHardwareMap().get(DcMotorEx.class, "tLM")/*testingLeftMotor*/));
 
-
+    private int position;
 
     public boolean pos1true = true;
     public boolean servopos1true = true;
@@ -53,6 +53,7 @@ public class Testing extends SDKSubsystem {
     @Override
     public void preUserInitHook(@NonNull Wrapper opMode) {
         // Init sequence
+        position = 0;
         getTelemetry().addLine("Testing Initalising");
         Testing3.get().resetDeviceConfigurationForOpMode();
         Testing4.get().resetDeviceConfigurationForOpMode();
@@ -62,8 +63,8 @@ public class Testing extends SDKSubsystem {
         Testing4.get().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         Testing2.get().setDirection(Servo.Direction.REVERSE);
         Testing3.get().setDirection(DcMotorEx.Direction.REVERSE);
-        Testing3.get().setTargetPosition(300);
-        Testing4.get().setTargetPosition(300);
+        Testing3.get().setTargetPosition(1000);
+        Testing4.get().setTargetPosition(1000);
         Testing3.get().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         Testing4.get().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         Testing3.get().setPower(1);
@@ -120,8 +121,8 @@ public class Testing extends SDKSubsystem {
                         Testing4.get().setPower(1);
                         pos1true=false;
                     } else {
-                        Testing3.get().setTargetPosition(500);
-                        Testing4.get().setTargetPosition(500);
+                        Testing3.get().setTargetPosition(1300);
+                        Testing4.get().setTargetPosition(1300);
                         Testing3.get().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
                         Testing4.get().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
                         Testing3.get().setPower(1);
@@ -130,6 +131,36 @@ public class Testing extends SDKSubsystem {
                     }
 
                     getTelemetry().addData("Motor Position",Testing3.get().getCurrentPosition());
+                });
+    }
+
+    @NonNull
+    public Lambda incrementMotor() {
+        return new Lambda("Increment Motor")
+                .addRequirements(INSTANCE)
+                .addExecute(() -> {
+                    this.position += 100;
+                    Testing3.get().setTargetPosition(this.position);
+                    Testing4.get().setTargetPosition(this.position);
+                    Testing3.get().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+                    Testing4.get().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+                    Testing3.get().setPower(1);
+                    Testing4.get().setPower(1);
+                });
+    }
+
+    @NonNull
+    public Lambda incrementMotorDown() {
+        return new Lambda("Increment Motor Down")
+                .addRequirements(INSTANCE)
+                .addExecute(() -> {
+                    this.position -= 100;
+                    Testing3.get().setTargetPosition(this.position);
+                    Testing4.get().setTargetPosition(this.position);
+                    Testing3.get().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+                    Testing4.get().setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+                    Testing3.get().setPower(1);
+                    Testing4.get().setPower(1);
                 });
     }
 

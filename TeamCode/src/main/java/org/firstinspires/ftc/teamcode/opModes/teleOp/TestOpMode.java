@@ -7,7 +7,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.dairyFarm.subsytems.Intake;
 import org.firstinspires.ftc.teamcode.dairyFarm.subsytems.Testing;
 
+import dev.frozenmilk.dairy.core.FeatureRegistrar;
 import dev.frozenmilk.mercurial.Mercurial;
+import dev.frozenmilk.mercurial.commands.Command;
 
 @TeleOp(name= "TESTING")
 @Config
@@ -35,12 +37,17 @@ public class TestOpMode extends OpMode {
                 Testing.INSTANCE.toggleMotor()
         );
 
-        Mercurial.gamepad1().dpadUp().onTrue(
-                
-        );
 
         Mercurial.gamepad1().options().onTrue(
                 Intake.INSTANCE.toggleIntake()
+        );
+
+        Mercurial.gamepad1().dpadUp().onTrue(
+                Testing.INSTANCE.incrementMotor()
+        );
+
+        Mercurial.gamepad1().dpadDown().onTrue(
+                Testing.INSTANCE.incrementMotorDown()
         );
     }
 

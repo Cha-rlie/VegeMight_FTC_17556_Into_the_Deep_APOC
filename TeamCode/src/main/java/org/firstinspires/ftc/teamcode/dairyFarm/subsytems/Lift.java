@@ -30,6 +30,8 @@ public class Lift extends SDKSubsystem {
 
     // Declare the motors and mecanum drive
     // @charlie please check motor names
+    //Low basket - 400
+    // Max extension for intake - 800
     private final Cell<CachingDcMotor> motorLiftL = subsystemCell(() -> new CachingDcMotor(getHardwareMap().get(DcMotorEx.class, "LS")));
     private final Cell<CachingDcMotor> motorLiftR = subsystemCell(() -> new CachingDcMotor(getHardwareMap().get(DcMotorEx.class, "RS")));
 
@@ -88,7 +90,7 @@ public class Lift extends SDKSubsystem {
                                 RTP = 0;
                                 break;
                             case DEPOSIT:
-                                RTP = 1700;
+                                RTP = 1300;
                                 break;
                             default:
                                 RTP = 0;
