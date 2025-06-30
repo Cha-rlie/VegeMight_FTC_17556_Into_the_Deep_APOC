@@ -28,6 +28,7 @@ public class Globals extends SDKSubsystem {
     public static final Globals INSTANCE = new Globals();
     public static boolean isSampleModeTrue = true;
     public static boolean updateRobotStateTrue = false;
+    public static boolean backwardsMode = false; // Maybe? For now, not used
     public static boolean isLiftDown = false;
 
     // Declare the global variables
@@ -66,11 +67,7 @@ public class Globals extends SDKSubsystem {
 
             //Sample states
             put(RobotState.DEPOSIT, new Lambda("Go forwards from IDLE").addExecute(()->{
-                new Sequential(
-                    new Lambda("Open Claw").addExecute(()->{
-                        OLDINTAKE.INSTANCE.clawOpen=true;}), //OPEN CLAW
-                    new Lambda("To IDLE").addExecute(()->{robotState.accept(RobotState.IDLE);}) // Go to IDLE ** NEED TO MAKE THIS NO L3 ASCENT **
-                );
+                robotState.accept(RobotState.IDLE);
             }));
             put(RobotState.HOVERAFTERGRAB, new Lambda("Go forwards from HOVER AFTER").addExecute(()->{
                 robotState.accept(RobotState.IDLE);
@@ -150,12 +147,25 @@ public class Globals extends SDKSubsystem {
     }
 
     @NonNull
+    public Lambda forwardsRobotState() {
+        return new Lambda("Forwards State")
+                .addRequirements(INSTANCE)
+                .addExecute(()-> {
+                            updateRobotStateTrue=true;
+                            if (Globals.updateRobotStateTrue) {
+                                new Lambda("Immmmm going forwards").addExecute(() -> goForwardState.get(Globals.getRobotState()));
+                            }
+                        }
+                );
+    }
+
+    @NonNull
     public Lambda backwardsRobotState() {
         return new Lambda("Backwards State")
                 .addRequirements(INSTANCE)
                 .addExecute(()-> {
                             updateRobotStateTrue=true;
-                            if (Globals.updateRobotStateTrue == true) {
+                            if (Globals.updateRobotStateTrue) {
                                 new Lambda("Immmmm going back").addExecute(() -> goBackwardState.get(Globals.getRobotState()));
                             }
                         }
@@ -203,20 +213,6 @@ public class Globals extends SDKSubsystem {
                 .addExecute(()-> {
                    isSampleModeTrue = !isSampleModeTrue;
                 });
-    }
-    @NonNull
-    public Lambda forwardsRobotState() {
-        return new Lambda("Forwards State")
-                .addRequirements(INSTANCE)
-                .addExecute(()-> {
-                            updateRobotStateTrue=true;
-                            if (Globals.updateRobotStateTrue == true) {
-                                new Lambda("Immmmm going forwards").addExecute(() -> goForwardState.get(Globals.getRobotState()));
-                            }
-                            new Wait(0.1);
-                            updateRobotStateTrue=false;
-                        }
-                );
     }
 
     @Override

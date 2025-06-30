@@ -91,6 +91,11 @@ public class Arm extends SDKSubsystem {
         setDefaultCommand(turnArm());
     }
 
+    @Override
+    public void preUserLoopHook(@NonNull Wrapper opMope) {
+
+    }
+
     @NonNull
     public Lambda turnArm(){
         return new Lambda("TurnArm")

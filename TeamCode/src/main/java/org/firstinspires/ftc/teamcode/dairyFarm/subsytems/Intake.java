@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.camembert.cheeseFactory.Globals;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
@@ -29,6 +31,8 @@ public class Intake extends SDKSubsystem {
 
     private final Cell<CachingServo> intakeServo = subsystemCell(() -> new CachingServo(getHardwareMap().get(Servo.class, "SM")));
 
+    private static double targetPos = 0;
+
     public static boolean intakeIsTrue = true;
     public static double speedOfRotation=1;
 
@@ -37,19 +41,25 @@ public class Intake extends SDKSubsystem {
     @Override
     public void preUserInitHook(@NonNull Wrapper opMode) {
         // Init sequence
+        targetPos = 0;
+
         getTelemetry().addLine("Intake Initalising");
 
-        setDefaultCommand(
-            new Parallel(
-                turnClaw(),
-                new Lambda("print name").addExecute(() -> getTelemetry().addData("Servo pos", intakeServo.get().getPosition()))
-            ));
+        setDefaultCommand(turnClawWithState());
 
     }
+
+    @Override
+    public void preUserLoopHook(@NonNull Wrapper opMode) {
+        getTelemetry().addData("Actual SM Servo Pos", intakeServo.get().getPosition());
+        getTelemetry().addData("Target SM Servo Pos", targetPos);
+    }
+
     public Lambda adjustClawForwards() {
         return new Lambda ("TESTING")
                 .addExecute(()-> {
-                    intakeServo.get().setPosition(intakeServo.get().getPosition()+0.01);
+                    targetPos += 0.01;
+                    intakeServo.get().setPosition(targetPos);
                     getTelemetry().addData("ServoPosition",intakeServo.get().getPosition());
                 });
     }
@@ -57,8 +67,30 @@ public class Intake extends SDKSubsystem {
     public Lambda adjustClawBackwards() {
         return new Lambda ("TESTING")
                 .addExecute(()-> {
-                    intakeServo.get().setPosition(intakeServo.get().getPosition()-0.01);
+                    targetPos -= 0.01;
+                    intakeServo.get().setPosition(targetPos);
                     getTelemetry().addData("ServoPosition",intakeServo.get().getPosition());
+                });
+    }
+
+    @NonNull
+    public Lambda turnClawWithState() {
+        return new Lambda("Spin SM by State")
+                .addRequirements(INSTANCE)
+                .addExecute(() -> {
+                    if (Globals.updateRobotStateTrue) {
+                        switch (Globals.getRobotState()) {
+                            case GRAB:
+                                targetPos += 0.25;
+                                break;
+                            case DEPOSIT:
+                                targetPos = 0;
+                                break;
+                            default:
+                                // Keep targetPos the same
+                                break;
+                        }
+                    }
                 });
     }
 
@@ -72,7 +104,6 @@ public class Intake extends SDKSubsystem {
                         intakeServo.get().setPosition(0.52); // 0.52
                     }
                     getTelemetry().addLine("Intake Turning");
-                    getTelemetry().update();
                 });
     }
 
@@ -86,7 +117,15 @@ public class Intake extends SDKSubsystem {
                         intakeIsTrue = true;
                     }
                     getTelemetry().addLine("Intake Toggled");
-                    getTelemetry().update();
+                });
+    }
+
+    @NonNull
+    public Lambda resetIntake() {
+        return new Lambda("Reset Intake")
+                .addRequirements(INSTANCE)
+                .addExecute(() -> {
+                   targetPos = 0;
                 });
     }
 

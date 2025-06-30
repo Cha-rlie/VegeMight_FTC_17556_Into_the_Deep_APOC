@@ -96,6 +96,7 @@ public class Lift extends SDKSubsystem {
         return new Lambda("ChangePosition")
                 .addRequirements(INSTANCE)
                 .addExecute(() -> {
+                    if (Globals.updateRobotStateTrue) {updatePosFromState();}
                     motorLiftL.get().setTargetPosition(RTP);
                     motorLiftR.get().setTargetPosition(RTP);
                     motorLiftL.get().setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -103,7 +104,6 @@ public class Lift extends SDKSubsystem {
                     getTelemetry().addLine("AM I RUNNING TO TELEMETRY PLS");
                     motorLiftL.get().setPower(0.9);
                     motorLiftR.get().setPower(0.9);
-                    if (Globals.updateRobotStateTrue) {updatePosFromState();}
                 });
     }
 

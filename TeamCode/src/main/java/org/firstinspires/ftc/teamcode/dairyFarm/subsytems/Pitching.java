@@ -84,7 +84,7 @@ public class Pitching extends SDKSubsystem {
     public Lambda adjustPitchingUp(){
         return new Lambda("Adjust Pitching")
                 .addExecute(()-> {
-                    runToPos=runToPos+50;
+                    runToPos += 50;
                 });
 
     }
@@ -93,7 +93,7 @@ public class Pitching extends SDKSubsystem {
     public Lambda adjustPitchingDown(){
         return new Lambda("Adjust Pitching")
                 .addExecute(()-> {
-                    runToPos=runToPos-50;
+                    runToPos -= 50;
                 });
 
     }
