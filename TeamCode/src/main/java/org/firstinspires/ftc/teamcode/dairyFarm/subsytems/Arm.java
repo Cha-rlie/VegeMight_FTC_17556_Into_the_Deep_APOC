@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.dairyFarm.subsytems;
 
 import androidx.annotation.NonNull;
 
+import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.camembert.cheeseFactory.Globals;
@@ -21,6 +22,8 @@ import dev.frozenmilk.dairy.core.wrapper.Wrapper;
 import dev.frozenmilk.mercurial.commands.Command;
 import dev.frozenmilk.mercurial.commands.Lambda;
 import dev.frozenmilk.mercurial.commands.groups.Parallel;
+import dev.frozenmilk.mercurial.commands.groups.Sequential;
+import dev.frozenmilk.mercurial.commands.util.IfElse;
 import dev.frozenmilk.mercurial.subsystems.SDKSubsystem;
 import dev.frozenmilk.mercurial.subsystems.Subsystem;
 import dev.frozenmilk.util.cell.Cell;
@@ -33,13 +36,25 @@ public class Arm extends SDKSubsystem {
 
     public final Cell<CachingServo> leftArm = subsystemCell(() -> new CachingServo(getHardwareMap().get(Servo.class, "LA")));
     public final Cell<CachingServo> rightArm = subsystemCell(() -> new CachingServo(getHardwareMap().get(Servo.class, "RA")));
-    public static double armPosition = 0;
+    public static double armPosition = 0.35;
     public double adjustment = 0;
 
     private HashMap<Object, Command> stateToCommandMap;
+    private HashMap<RobotState, Double> stateToPositionMap;
 
     private Arm(){
         //HASHMAP OF POSITIONS
+        stateToPositionMap = new HashMap<RobotState, Double>() {{
+            put(RobotState.IDLE, 0.35);
+            put(RobotState.DEPOSIT, 0.27);
+            put(RobotState.HOVERBEFOREGRAB, 0.38);
+            put(RobotState.GRAB, 0.42);
+            put(RobotState.HOVERAFTERGRAB, 0.38);
+            put(RobotState.SPECHOVER, 0.0);
+            put(RobotState.SPECGRAB, 0.0);
+            put(RobotState.DEPOSITSPECIMEN, 0.0);
+        }};
+        // Below is not needed
         stateToCommandMap = new HashMap<Object, Command>() {{
             put(RobotState.IDLE, new Lambda("IDLE ARM").addExecute(() -> {
                 armPosition=0.35;
@@ -87,29 +102,33 @@ public class Arm extends SDKSubsystem {
     public void preUserInitHook(@NonNull Wrapper opMode) {
         // Init sequence
         getTelemetry().addLine("Arm Initalising");
-        leftArm.get().setDirection(Servo.Direction.REVERSE);
+        rightArm.get().setDirection(Servo.Direction.REVERSE);
         setDefaultCommand(turnArm());
     }
 
     @Override
     public void preUserLoopHook(@NonNull Wrapper opMope) {
-
+        getTelemetry().addData("Arm RTP", armPosition);
+        getTelemetry().addData("Actual Arm Pos", leftArm.get().getPosition());
     }
 
     @NonNull
-    public Lambda turnArm(){
-        return new Lambda("TurnArm")
-        .addRequirements(INSTANCE)
-        .addExecute(() -> {
-            new Parallel(
+    public Sequential turnArm(){
+            return new Sequential(
+                new IfElse(
+                        () -> Globals.updateRobotStateTrue && !Globals.armAcceptState,
+                        new Lambda("Run Change State for Arm").setExecute(() -> {
+                            Globals.armAcceptState = false;
+                            armPosition = stateToPositionMap.get(Globals.getRobotState());
+                            adjustment = 0;
+                        }),
+                        new Lambda("EMPTY")
+                ),
                 new Lambda("TurnArm").addExecute(()-> {
-                    if (Globals.updateRobotStateTrue == true) {
-                        new Lambda("Run Change State for Arm").addExecute(() -> stateToCommandMap.get(Globals.getRobotState()));
-                    }
-                    rightArm.get().setPosition(armPosition+adjustment);
-                    leftArm.get().setPosition(armPosition+adjustment);
-                }));
-        });
+                        rightArm.get().setPosition(armPosition+adjustment);
+                        leftArm.get().setPosition(armPosition+adjustment);
+                })
+        );
     }
 
     @NonNull

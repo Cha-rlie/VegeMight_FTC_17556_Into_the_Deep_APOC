@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.camembert.cheeseFactory;
 
 import androidx.annotation.NonNull;
 
+import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.dairyFarm.subsytems.OLDINTAKE;
 
 import java.lang.annotation.ElementType;
@@ -27,19 +28,46 @@ public class Globals extends SDKSubsystem {
 
     public static final Globals INSTANCE = new Globals();
     public static boolean isSampleModeTrue = true;
-    public static boolean updateRobotStateTrue = false;
+    public static boolean updateRobotStateTrue = true;
     public static boolean backwardsMode = false; // Maybe? For now, not used
     public static boolean isLiftDown = false;
+    public static boolean liftAcceptState = false;
+    public static boolean pitchAcceptState = false;
+    public static boolean armAcceptState = false;
+    public static boolean intakeAcceptState = false;
 
     // Declare the global variables
     private OpModeLazyCell<RobotState> robotState = new OpModeLazyCell<>(() -> RobotState.IDLE);
 
     private HashMap<Object, Command> goForwardState;
     private HashMap <Object, Command> goBackwardState;
+    private HashMap <RobotState, RobotState> goForwardStateValuesOnly;
+    private HashMap <RobotState, RobotState> goBackwardStateValuesOnly;
     
     // Constructor that builds the drivetrain subsystem class and Hashmaps :D
     public Globals() {
         robotState.accept(RobotState.IDLE);
+        goForwardStateValuesOnly = new HashMap<RobotState, RobotState>() {{
+            put(RobotState.IDLE, !isSampleModeTrue ? RobotState.DEPOSIT : RobotState.DEPOSITSPECIMEN);
+            put(RobotState.REJECT, !isSampleModeTrue ? RobotState.HOVERBEFOREGRAB : RobotState.SPECHOVER);
+            put(RobotState.DEPOSIT, RobotState.IDLE);
+            put(RobotState.HOVERAFTERGRAB, RobotState.IDLE);
+            put(RobotState.HOVERBEFOREGRAB, RobotState.GRAB);
+            put(RobotState.GRAB, RobotState.HOVERAFTERGRAB);
+            put(RobotState.DEPOSITSPECIMEN, RobotState.IDLE);
+            put(RobotState.SPECHOVER, RobotState.GRAB);
+            put(RobotState.SPECGRAB, RobotState.IDLE);
+        }};
+        goBackwardStateValuesOnly = new HashMap<RobotState, RobotState>() {{
+            put(RobotState.IDLE, !isSampleModeTrue ? RobotState.HOVERBEFOREGRAB : RobotState.SPECHOVER);
+            put(RobotState.DEPOSIT, RobotState.IDLE);
+            put(RobotState.HOVERAFTERGRAB, RobotState.GRAB);
+            put(RobotState.HOVERBEFOREGRAB, RobotState.IDLE);
+            put(RobotState.GRAB, RobotState.HOVERBEFOREGRAB);
+            put(RobotState.DEPOSITSPECIMEN, RobotState.IDLE);
+            put(RobotState.SPECHOVER, RobotState.IDLE);
+            put(RobotState.SPECGRAB, RobotState.SPECHOVER);
+        }};
 
         goForwardState = new HashMap<Object, Command>() {{
             //Global States
@@ -151,11 +179,16 @@ public class Globals extends SDKSubsystem {
         return new Lambda("Forwards State")
                 .addRequirements(INSTANCE)
                 .addExecute(()-> {
+                            updateRobotStateTrue = true;
+                            resetAllSubsystemAcceptance();
+                            robotState.accept(goForwardStateValuesOnly.get(getRobotState()));
+                        }
+                    /*getTelemetry().addLine("FORWARDS!!!!!!!!!!!!!!");
                             updateRobotStateTrue=true;
                             if (Globals.updateRobotStateTrue) {
                                 new Lambda("Immmmm going forwards").addExecute(() -> goForwardState.get(Globals.getRobotState()));
                             }
-                        }
+                        }*/
                 );
     }
 
@@ -164,11 +197,16 @@ public class Globals extends SDKSubsystem {
         return new Lambda("Backwards State")
                 .addRequirements(INSTANCE)
                 .addExecute(()-> {
+                    updateRobotStateTrue = true;
+                    resetAllSubsystemAcceptance();
+                    robotState.accept(goBackwardStateValuesOnly.get(getRobotState()));
+                        }
+                    /*getTelemetry().addLine("BACKWARDS!!!!!!!!!!!!!!");
                             updateRobotStateTrue=true;
                             if (Globals.updateRobotStateTrue) {
                                 new Lambda("Immmmm going back").addExecute(() -> goBackwardState.get(Globals.getRobotState()));
                             }
-                        }
+                        }*/
                 );
     }
 
@@ -216,10 +254,27 @@ public class Globals extends SDKSubsystem {
     }
 
     @Override
+    public void preUserInitHook(@NonNull Wrapper opMode) {
+        robotState.accept(RobotState.IDLE);
+    }
+    @Override
     public void preUserLoopHook(@NonNull Wrapper opMode) {
-        updateRobotStateTrue = false;
-        getTelemetry().addData("Robot State", INSTANCE.robotState.get());
+        if (allStatesBeenChanged()) {updateRobotStateTrue = false;}
+        getTelemetry().addData("Robot State", robotState.get());
+        getTelemetry().addData("Update Robot State", updateRobotStateTrue);
+        getTelemetry().addData("Lift Accepted New State?", liftAcceptState);
+        getTelemetry().addData("Arm Accepted New State?", armAcceptState);
         getTelemetry().addData("isSampleTrue", isSampleModeTrue);
+    }
+
+    private void resetAllSubsystemAcceptance() {
+        liftAcceptState = false;
+        pitchAcceptState = false;
+        armAcceptState = false;
+        intakeAcceptState = false;
+    }
+    private boolean allStatesBeenChanged() {
+        return liftAcceptState && pitchAcceptState && armAcceptState && intakeAcceptState;
     }
 
     @Retention(RetentionPolicy.RUNTIME)

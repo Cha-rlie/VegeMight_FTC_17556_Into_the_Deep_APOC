@@ -63,6 +63,10 @@ public class FreshCheese extends OpMode{
             Intake.INSTANCE.toggleIntake()
         );
 
+        Mercurial.gamepad1().back().onTrue(
+            Intake.INSTANCE.resetIntake()
+        );
+
         // Arm binds
         Mercurial.gamepad2().cross().onTrue(
             Arm.INSTANCE.adjustArmDown()

@@ -21,6 +21,7 @@ import dev.frozenmilk.dairy.core.dependency.annotation.SingleAnnotations;
 import dev.frozenmilk.dairy.core.wrapper.Wrapper;
 import dev.frozenmilk.mercurial.commands.Lambda;
 import dev.frozenmilk.mercurial.commands.groups.Parallel;
+import dev.frozenmilk.mercurial.commands.util.Wait;
 import dev.frozenmilk.mercurial.subsystems.SDKSubsystem;
 import dev.frozenmilk.mercurial.subsystems.Subsystem;
 import dev.frozenmilk.util.cell.Cell;
@@ -41,6 +42,8 @@ public class Intake extends SDKSubsystem {
     @Override
     public void preUserInitHook(@NonNull Wrapper opMode) {
         // Init sequence
+        intakeServo.get().setDirection(Servo.Direction.REVERSE);
+
         targetPos = 0;
 
         getTelemetry().addLine("Intake Initalising");
@@ -78,19 +81,22 @@ public class Intake extends SDKSubsystem {
         return new Lambda("Spin SM by State")
                 .addRequirements(INSTANCE)
                 .addExecute(() -> {
-                    if (Globals.updateRobotStateTrue) {
+                    if (Globals.updateRobotStateTrue && !Globals.intakeAcceptState) {
+                        Globals.intakeAcceptState = true;
                         switch (Globals.getRobotState()) {
                             case GRAB:
                                 targetPos += 0.25;
                                 break;
                             case DEPOSIT:
-                                targetPos = 0;
+                                //new Wait(800);
+                                //targetPos = 0;
                                 break;
                             default:
                                 // Keep targetPos the same
                                 break;
                         }
                     }
+                    intakeServo.get().setPosition(targetPos);
                 });
     }
 
@@ -98,7 +104,7 @@ public class Intake extends SDKSubsystem {
     public Lambda turnClaw() {
         return new Lambda ("Turn Intake")
                 .addExecute(()-> {
-                    if (intakeIsTrue==true) {
+                    if (intakeIsTrue) {
                         intakeServo.get().setPosition(0.77); // 0.77
                     } else {
                         intakeServo.get().setPosition(0.52); // 0.52
@@ -111,11 +117,7 @@ public class Intake extends SDKSubsystem {
     public Lambda toggleIntake() {
         return new Lambda ("Toggle Intake")
                 .addExecute(()-> {
-                    if (intakeIsTrue == true) {
-                        intakeIsTrue = false;
-                    } else if (intakeIsTrue == false) {
-                        intakeIsTrue = true;
-                    }
+                    targetPos += 0.25;
                     getTelemetry().addLine("Intake Toggled");
                 });
     }

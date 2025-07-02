@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.camembert.cheeseFactory.Globals;
+import org.firstinspires.ftc.teamcode.camembert.cheeseFactory.RobotState;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
@@ -18,8 +19,11 @@ import dev.frozenmilk.dairy.cachinghardware.CachingDcMotorEx;
 import dev.frozenmilk.dairy.core.dependency.Dependency;
 import dev.frozenmilk.dairy.core.dependency.annotation.SingleAnnotations;
 import dev.frozenmilk.dairy.core.wrapper.Wrapper;
+import dev.frozenmilk.mercurial.Mercurial;
 import dev.frozenmilk.mercurial.commands.Command;
 import dev.frozenmilk.mercurial.commands.Lambda;
+import dev.frozenmilk.mercurial.commands.groups.Sequential;
+import dev.frozenmilk.mercurial.commands.util.IfElse;
 import dev.frozenmilk.mercurial.subsystems.SDKSubsystem;
 import dev.frozenmilk.mercurial.subsystems.Subsystem;
 import dev.frozenmilk.dairy.cachinghardware.CachingDcMotor;
@@ -47,6 +51,8 @@ public class Lift extends SDKSubsystem {
         // Init sequence
         RTP = 0;
         getTelemetry().addLine("Slides Initalising");
+        motorLiftL.get().setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        motorLiftR.get().setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         motorLiftL.get().resetDeviceConfigurationForOpMode();
         motorLiftR.get().resetDeviceConfigurationForOpMode();
         motorLiftR.get().setDirection(DcMotorSimple.Direction.REVERSE);
@@ -54,8 +60,8 @@ public class Lift extends SDKSubsystem {
         motorLiftL.get().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorLiftL.get().setTargetPositionTolerance(50);
         motorLiftL.get().setTargetPositionTolerance(50);
-        motorLiftL.get().setTargetPosition(432);
-        motorLiftR.get().setTargetPosition(432);
+        motorLiftL.get().setTargetPosition(0);
+        motorLiftR.get().setTargetPosition(0);
         motorLiftL.get().setMode(DcMotor.RunMode.RUN_TO_POSITION);
         motorLiftR.get().setMode(DcMotor.RunMode.RUN_TO_POSITION);
         motorLiftL.get().setPower(1);
@@ -68,6 +74,7 @@ public class Lift extends SDKSubsystem {
     public void preUserLoopHook(@NonNull Wrapper opMode) {
         getTelemetry().addData("Lift RTP", RTP);
         getTelemetry().addData("Lift Target Position", motorLiftL.get().getTargetPosition());
+        getTelemetry().addData("LS Pos", motorLiftL.get().getCurrentPosition());
     }
 
     // TODO: FORCE IT DOWN TO START FROM CONSISTENT POSITION
@@ -92,38 +99,47 @@ public class Lift extends SDKSubsystem {
     }
 
     @NonNull
-    public Lambda goToPosition() {
-        return new Lambda("ChangePosition")
+    public Sequential goToPosition() {
+        return new Sequential(
+                new IfElse(
+                        () -> Globals.updateRobotStateTrue && !Globals.liftAcceptState,
+                        updatePosFromState(),
+                        new Lambda("EMPTY")
+                ),
+                new Lambda("Change Position for Lift")
                 .addRequirements(INSTANCE)
-                .addExecute(() -> {
-                    if (Globals.updateRobotStateTrue) {updatePosFromState();}
+                .setExecute(() -> {
                     motorLiftL.get().setTargetPosition(RTP);
                     motorLiftR.get().setTargetPosition(RTP);
                     motorLiftL.get().setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     motorLiftR.get().setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    getTelemetry().addLine("AM I RUNNING TO TELEMETRY PLS");
                     motorLiftL.get().setPower(0.9);
                     motorLiftR.get().setPower(0.9);
-                });
+                })
+                );
     }
 
     @NonNull
     public Lambda updatePosFromState() {
         return new Lambda("ChangeLiftPos")
             .addRequirements(INSTANCE)
-            .addExecute(() -> {
-                if (Globals.isSampleModeTrue) {
-                    switch (Globals.INSTANCE.getRobotState()) {
-                        case IDLE:
-                            RTP = 0;
-                            break;
-                        case DEPOSIT:
-                            RTP = 1300;
-                            break;
-                        default:
-                            RTP = 0;
-                            break;
-                    }
+            .setExecute(() -> {
+                Globals.liftAcceptState = true;
+                switch (Globals.getRobotState()) {
+                    case IDLE:
+                        RTP = 0;
+                        break;
+                    case DEPOSIT:
+                        RTP = 1300;
+                        break;
+                    case HOVERBEFOREGRAB:
+                    case GRAB:
+                    case HOVERAFTERGRAB:
+                        RTP = 250;
+                        break;
+                    default:
+                        RTP = 0;
+                        break;
                 }
             });
     }
@@ -133,8 +149,14 @@ public class Lift extends SDKSubsystem {
         return new Lambda("Lift Up")
                 .addRequirements(INSTANCE)
                 .addExecute(()-> {
-                    if (RTP+100<1500 /*CHANGE THIS NUMBER*/) {
-                        RTP = RTP + 100;
+                    if (Globals.getRobotState() == RobotState.DEPOSIT || Globals.getRobotState() == RobotState.IDLE) {
+                        if (RTP + 100 < 1500 /*CHANGE THIS NUMBER*/) {
+                            RTP += 100;
+                        } else {RTP = 1500;}
+                    } else {
+                        if (RTP + 100 < 800) {
+                            RTP += 100;
+                        } else {RTP = 800;}
                     }
                 });
     }
