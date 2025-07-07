@@ -134,7 +134,7 @@ public class Drivetrain extends SDKSubsystem {
                             if (FeatureRegistrar.getActiveOpMode().gamepad1.right_trigger > 0.5) {
                                 INSTANCE.velocityAdjuster = 0.7;
                             } else {
-                                INSTANCE.velocityAdjuster = 0.6;
+                                INSTANCE.velocityAdjuster = 0.8;
                             }
                     }
                 });

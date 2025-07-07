@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.camembert.cheeseFactory;
 
 import androidx.annotation.NonNull;
 
+import com.qualcomm.robotcore.robot.Robot;
+
 import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.dairyFarm.subsytems.OLDINTAKE;
 
@@ -28,6 +30,7 @@ public class Globals extends SDKSubsystem {
 
     public static final Globals INSTANCE = new Globals();
     public static boolean isSampleModeTrue = true;
+    public static boolean isBackwardsMode = false;
     public static boolean updateRobotStateTrue = true;
     public static boolean backwardsMode = false; // Maybe? For now, not used
     public static boolean isLiftDown = false;
@@ -38,15 +41,19 @@ public class Globals extends SDKSubsystem {
 
     // Declare the global variables
     private OpModeLazyCell<RobotState> robotState = new OpModeLazyCell<>(() -> RobotState.IDLE);
+    public static RobotState lastRobotState = RobotState.IDLE;
 
     private HashMap<Object, Command> goForwardState;
     private HashMap <Object, Command> goBackwardState;
     private HashMap <RobotState, RobotState> goForwardStateValuesOnly;
     private HashMap <RobotState, RobotState> goBackwardStateValuesOnly;
-    
+    private HashMap <RobotState, RobotState> goForwardStateForBackwardModeValuesOnly;
+    private HashMap <RobotState, RobotState> goBackwardStateForBackwardModeValuesOnly;
+
     // Constructor that builds the drivetrain subsystem class and Hashmaps :D
     public Globals() {
         robotState.accept(RobotState.IDLE);
+        lastRobotState = RobotState.IDLE;
         goForwardStateValuesOnly = new HashMap<RobotState, RobotState>() {{
             put(RobotState.IDLE, !isSampleModeTrue ? RobotState.DEPOSIT : RobotState.DEPOSITSPECIMEN);
             put(RobotState.REJECT, !isSampleModeTrue ? RobotState.HOVERBEFOREGRAB : RobotState.SPECHOVER);
@@ -67,6 +74,21 @@ public class Globals extends SDKSubsystem {
             put(RobotState.DEPOSITSPECIMEN, RobotState.IDLE);
             put(RobotState.SPECHOVER, RobotState.IDLE);
             put(RobotState.SPECGRAB, RobotState.SPECHOVER);
+        }};
+        // For Backwards Mode
+        goForwardStateForBackwardModeValuesOnly = new HashMap<RobotState, RobotState>() {{
+           put(RobotState.IDLE, RobotState.BACKWARDSCORE);
+           put(RobotState.BACKWARDSCORE, RobotState.IDLE);
+           put(RobotState.BACKWARDHOVERBEFOREGRAB, RobotState.BACKWARDGRAB);
+           put(RobotState.BACKWARDGRAB, RobotState.BACKWARDHOVERAFTERGRAB);
+           put(RobotState.BACKWARDHOVERAFTERGRAB, RobotState.IDLE);
+        }};
+        goBackwardStateForBackwardModeValuesOnly = new HashMap<RobotState, RobotState>() {{
+            put(RobotState.IDLE, RobotState.BACKWARDHOVERBEFOREGRAB);
+            put(RobotState.BACKWARDSCORE, RobotState.IDLE);
+            put(RobotState.BACKWARDHOVERBEFOREGRAB, RobotState.IDLE);
+            put(RobotState.BACKWARDGRAB, RobotState.BACKWARDHOVERBEFOREGRAB);
+            put(RobotState.BACKWARDHOVERAFTERGRAB, RobotState.BACKWARDGRAB);
         }};
 
         goForwardState = new HashMap<Object, Command>() {{
@@ -175,13 +197,25 @@ public class Globals extends SDKSubsystem {
     }
 
     @NonNull
+    public Lambda toggleBackwardsMode() {
+        return new Lambda("Toggle Backwards Mode").addExecute(() -> {
+            if (robotState.get() == RobotState.IDLE) {
+                backwardsMode = !backwardsMode;
+            }
+        });
+    }
+
+    @NonNull
     public Lambda forwardsRobotState() {
         return new Lambda("Forwards State")
                 .addRequirements(INSTANCE)
                 .addExecute(()-> {
                             updateRobotStateTrue = true;
                             resetAllSubsystemAcceptance();
-                            robotState.accept(goForwardStateValuesOnly.get(getRobotState()));
+                            lastRobotState = robotState.get();
+                            if (!backwardsMode) {
+                                robotState.accept(goForwardStateValuesOnly.get(getRobotState()));
+                            } else {robotState.accept(goForwardStateForBackwardModeValuesOnly.get(getRobotState()));}
                         }
                     /*getTelemetry().addLine("FORWARDS!!!!!!!!!!!!!!");
                             updateRobotStateTrue=true;
@@ -199,15 +233,20 @@ public class Globals extends SDKSubsystem {
                 .addExecute(()-> {
                     updateRobotStateTrue = true;
                     resetAllSubsystemAcceptance();
-                    robotState.accept(goBackwardStateValuesOnly.get(getRobotState()));
-                        }
+                    lastRobotState = robotState.get();
+                    if (!backwardsMode) {
+                        robotState.accept(goBackwardStateValuesOnly.get(getRobotState()));
+                    } else {
+                        robotState.accept(goBackwardStateForBackwardModeValuesOnly.get(getRobotState()));
+                    }
+                }
                     /*getTelemetry().addLine("BACKWARDS!!!!!!!!!!!!!!");
                             updateRobotStateTrue=true;
                             if (Globals.updateRobotStateTrue) {
                                 new Lambda("Immmmm going back").addExecute(() -> goBackwardState.get(Globals.getRobotState()));
                             }
                         }*/
-                );
+        );
     }
 
     @NonNull
@@ -256,6 +295,8 @@ public class Globals extends SDKSubsystem {
     @Override
     public void preUserInitHook(@NonNull Wrapper opMode) {
         robotState.accept(RobotState.IDLE);
+        backwardsMode = false;
+        resetAllSubsystemAcceptance();
     }
     @Override
     public void preUserLoopHook(@NonNull Wrapper opMode) {
@@ -265,6 +306,7 @@ public class Globals extends SDKSubsystem {
         getTelemetry().addData("Lift Accepted New State?", liftAcceptState);
         getTelemetry().addData("Arm Accepted New State?", armAcceptState);
         getTelemetry().addData("isSampleTrue", isSampleModeTrue);
+        getTelemetry().addData("backwardMode", backwardsMode);
     }
 
     private void resetAllSubsystemAcceptance() {

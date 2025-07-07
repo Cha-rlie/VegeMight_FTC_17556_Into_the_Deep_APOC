@@ -89,6 +89,7 @@ public class Pitching extends SDKSubsystem {
         pitchingMotor.get().setTargetPosition(0);
         pitchingMotor.get().setMode(DcMotor.RunMode.RUN_TO_POSITION);
         pitchingMotor.get().setPower(1);
+        runToPos = 0;
         setDefaultCommand(turnPitching());
     }
 
@@ -104,7 +105,19 @@ public class Pitching extends SDKSubsystem {
                 new IfElse(
                         () -> Globals.updateRobotStateTrue && !Globals.pitchAcceptState,
                         new Lambda("Run Change State for Wrist").setExecute(() -> {
-                            runToPos = stateToValueMap.get(Globals.getRobotState());
+                            if (stateToValueMap.containsKey(Globals.getRobotState())) {
+                                if (Globals.getRobotState() == RobotState.IDLE) {
+                                    if (Globals.lastRobotState == RobotState.GRAB || Globals.lastRobotState == RobotState.HOVERBEFOREGRAB || Globals.lastRobotState == RobotState.HOVERAFTERGRAB) {
+                                        if (Lift.INSTANCE.notAdjusted()) {
+                                            runToPos = stateToValueMap.get(Globals.getRobotState());
+                                        }
+                                    }
+                                } else {
+                                    runToPos = stateToValueMap.get(Globals.getRobotState());
+                                }
+                            } else {
+                                runToPos = stateToValueMap.get(RobotState.IDLE);
+                            }
                             Globals.pitchAcceptState = true;
                         }),
                         new Lambda("EMPTY")

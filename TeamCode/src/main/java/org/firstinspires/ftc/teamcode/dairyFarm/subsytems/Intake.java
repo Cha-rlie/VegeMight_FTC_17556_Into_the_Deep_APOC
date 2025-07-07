@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.camembert.cheeseFactory.Globals;
+import org.firstinspires.ftc.teamcode.camembert.cheeseFactory.RobotState;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
@@ -85,12 +86,16 @@ public class Intake extends SDKSubsystem {
                         Globals.intakeAcceptState = true;
                         switch (Globals.getRobotState()) {
                             case GRAB:
-                                targetPos += 0.25;
+                                targetPos += 0.5; // Used to be 0.25
                                 break;
                             case DEPOSIT:
                                 //new Wait(800);
                                 //targetPos = 0;
                                 break;
+                            case IDLE:
+                                if (Globals.lastRobotState == RobotState.DEPOSIT) {
+                                    targetPos = 0;
+                                }
                             default:
                                 // Keep targetPos the same
                                 break;

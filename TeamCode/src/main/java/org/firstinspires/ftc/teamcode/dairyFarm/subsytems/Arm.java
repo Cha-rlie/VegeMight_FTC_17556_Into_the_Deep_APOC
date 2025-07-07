@@ -37,7 +37,7 @@ public class Arm extends SDKSubsystem {
     public final Cell<CachingServo> leftArm = subsystemCell(() -> new CachingServo(getHardwareMap().get(Servo.class, "LA")));
     public final Cell<CachingServo> rightArm = subsystemCell(() -> new CachingServo(getHardwareMap().get(Servo.class, "RA")));
     public static double armPosition = 0.35;
-    public double adjustment = 0;
+    public static double adjustment = 0;
 
     private HashMap<Object, Command> stateToCommandMap;
     private HashMap<RobotState, Double> stateToPositionMap;
@@ -45,14 +45,18 @@ public class Arm extends SDKSubsystem {
     private Arm(){
         //HASHMAP OF POSITIONS
         stateToPositionMap = new HashMap<RobotState, Double>() {{
-            put(RobotState.IDLE, 0.35);
-            put(RobotState.DEPOSIT, 0.27);
-            put(RobotState.HOVERBEFOREGRAB, 0.38);
-            put(RobotState.GRAB, 0.42);
-            put(RobotState.HOVERAFTERGRAB, 0.38);
+            put(RobotState.IDLE, 0.50);
+            put(RobotState.DEPOSIT, 0.41);
+            put(RobotState.HOVERBEFOREGRAB, 0.50);
+            put(RobotState.GRAB, 0.52);
+            put(RobotState.HOVERAFTERGRAB, 0.50);
             put(RobotState.SPECHOVER, 0.0);
             put(RobotState.SPECGRAB, 0.0);
             put(RobotState.DEPOSITSPECIMEN, 0.0);
+            put(RobotState.BACKWARDGRAB, 0.052);
+            put(RobotState.BACKWARDHOVERAFTERGRAB, 0.052);
+            put(RobotState.BACKWARDHOVERBEFOREGRAB, 0.052);
+            put(RobotState.BACKWARDSCORE, 0.60);
         }};
         // Below is not needed
         stateToCommandMap = new HashMap<Object, Command>() {{
@@ -69,7 +73,7 @@ public class Arm extends SDKSubsystem {
                 adjustment=0;
             }));
             put(RobotState.GRAB, new Lambda("GRAB ARM").addExecute(() -> {
-                armPosition=0.5;
+                armPosition=0.565;
                 adjustment=0;
             }));
             put(RobotState.HOVERAFTERGRAB, new Lambda("HAG ARM").addExecute(() -> {
@@ -103,13 +107,16 @@ public class Arm extends SDKSubsystem {
         // Init sequence
         getTelemetry().addLine("Arm Initalising");
         rightArm.get().setDirection(Servo.Direction.REVERSE);
+        leftArm.get().setDirection(Servo.Direction.FORWARD);
+        adjustment = 0;
         setDefaultCommand(turnArm());
     }
 
     @Override
     public void preUserLoopHook(@NonNull Wrapper opMope) {
         getTelemetry().addData("Arm RTP", armPosition);
-        getTelemetry().addData("Actual Arm Pos", leftArm.get().getPosition());
+        getTelemetry().addData("Actual Left Arm Pos", leftArm.get().getPosition());
+        getTelemetry().addData("Actual Right Arm Pos", rightArm.get().getPosition());
     }
 
     @NonNull
@@ -118,7 +125,7 @@ public class Arm extends SDKSubsystem {
                 new IfElse(
                         () -> Globals.updateRobotStateTrue && !Globals.armAcceptState,
                         new Lambda("Run Change State for Arm").setExecute(() -> {
-                            Globals.armAcceptState = false;
+                            Globals.armAcceptState = true;
                             armPosition = stateToPositionMap.get(Globals.getRobotState());
                             adjustment = 0;
                         }),
@@ -135,9 +142,8 @@ public class Arm extends SDKSubsystem {
     public Lambda adjustArmUp() {
         return new Lambda("adjust wrist")
                 .addExecute(()-> {
-                    new Lambda("changeAdjustment").addExecute(()->adjustment=adjustment+0.01);
+                    adjustment += 0.03;
                     getTelemetry().addLine("Arm Adjusted");
-                    getTelemetry().update();
                 });
     }
 
@@ -145,7 +151,7 @@ public class Arm extends SDKSubsystem {
     public Lambda adjustArmDown() {
         return new Lambda("adjust wrist")
                 .addExecute(()-> {
-                    new Lambda("changeAdjustment").addExecute(()->adjustment=adjustment-0.01);
+                    adjustment -= 0.03;
                     getTelemetry().addLine("Arm Adjusted");
                 });
     }
@@ -154,7 +160,7 @@ public class Arm extends SDKSubsystem {
     public Lambda resetAdjustment() {
         return new Lambda("reset adjustment")
                 .addExecute(() -> {
-                    new Lambda("resetAdjustment").addExecute(()->adjustment=0);
+                    adjustment = 0;
                     getTelemetry().addLine("Arm Adjustment Reset");
                 });
     }

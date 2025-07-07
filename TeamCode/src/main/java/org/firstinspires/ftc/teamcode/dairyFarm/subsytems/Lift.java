@@ -42,6 +42,7 @@ public class Lift extends SDKSubsystem {
     public final Cell<CachingDcMotorEx> motorLiftR = subsystemCell(() -> new CachingDcMotorEx(getHardwareMap().get(DcMotorEx.class, "RS")));
 
     public static int RTP;
+    public static int adjustment;
 
     private Lift() {
     }
@@ -50,6 +51,7 @@ public class Lift extends SDKSubsystem {
     public void preUserInitHook(@NonNull Wrapper opMode) {
         // Init sequence
         RTP = 0;
+        adjustment = 0;
         getTelemetry().addLine("Slides Initalising");
         motorLiftL.get().setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         motorLiftR.get().setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
@@ -73,6 +75,7 @@ public class Lift extends SDKSubsystem {
     @Override
     public void preUserLoopHook(@NonNull Wrapper opMode) {
         getTelemetry().addData("Lift RTP", RTP);
+        getTelemetry().addData("Lift Adjustment", adjustment);
         getTelemetry().addData("Lift Target Position", motorLiftL.get().getTargetPosition());
         getTelemetry().addData("LS Pos", motorLiftL.get().getCurrentPosition());
     }
@@ -109,12 +112,12 @@ public class Lift extends SDKSubsystem {
                 new Lambda("Change Position for Lift")
                 .addRequirements(INSTANCE)
                 .setExecute(() -> {
-                    motorLiftL.get().setTargetPosition(RTP);
-                    motorLiftR.get().setTargetPosition(RTP);
+                    motorLiftL.get().setTargetPosition(RTP+adjustment);
+                    motorLiftR.get().setTargetPosition(RTP+adjustment);
                     motorLiftL.get().setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     motorLiftR.get().setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    motorLiftL.get().setPower(0.9);
-                    motorLiftR.get().setPower(0.9);
+                    motorLiftL.get().setPower(1);
+                    motorLiftR.get().setPower(1);
                 })
                 );
     }
@@ -125,6 +128,15 @@ public class Lift extends SDKSubsystem {
             .addRequirements(INSTANCE)
             .setExecute(() -> {
                 Globals.liftAcceptState = true;
+                if (Globals.getRobotState() == RobotState.IDLE) {
+                    if (Globals.lastRobotState == RobotState.GRAB || Globals.lastRobotState == RobotState.HOVERBEFOREGRAB || Globals.lastRobotState == RobotState.HOVERAFTERGRAB) {
+                        adjustment = adjustment;
+                    } else {
+                        adjustment = 0;
+                    }
+                } else {
+                    adjustment = 0;
+                }
                 switch (Globals.getRobotState()) {
                     case IDLE:
                         RTP = 0;
@@ -147,16 +159,16 @@ public class Lift extends SDKSubsystem {
     @NonNull
     public Lambda adjustUp(){
         return new Lambda("Lift Up")
-                .addRequirements(INSTANCE)
+                //.addRequirements(INSTANCE)
                 .addExecute(()-> {
                     if (Globals.getRobotState() == RobotState.DEPOSIT || Globals.getRobotState() == RobotState.IDLE) {
-                        if (RTP + 100 < 1500 /*CHANGE THIS NUMBER*/) {
-                            RTP += 100;
-                        } else {RTP = 1500;}
+                        if ((RTP+adjustment) + 100 < 1500 /*CHANGE THIS NUMBER*/) {
+                            adjustment += 100;
+                        } else {adjustment = 1500 - RTP;}
                     } else {
-                        if (RTP + 100 < 800) {
-                            RTP += 100;
-                        } else {RTP = 800;}
+                        if (RTP + adjustment + 100 < 800) {
+                            adjustment += 100;
+                        } else {adjustment = 800 - RTP;}
                     }
                 });
     }
@@ -164,13 +176,16 @@ public class Lift extends SDKSubsystem {
     @NonNull
     public Lambda adjustDown(){
         return new Lambda("Lift Down")
-                .addRequirements(INSTANCE)
+                //.addRequirements(INSTANCE)
                 .addExecute(()-> {
-                    if (RTP-100>0){
-                        RTP=RTP-100;
-                    }
+                    adjustment = Math.max(RTP + adjustment - 100, 0);
                 });
     }
+
+    public boolean notAdjusted() {
+        return (motorLiftL.get().getCurrentPosition() < Lift.RTP + 50 && motorLiftL.get().getCurrentPosition() > Lift.RTP - 50);
+    }
+
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.TYPE)
     @MustBeDocumented

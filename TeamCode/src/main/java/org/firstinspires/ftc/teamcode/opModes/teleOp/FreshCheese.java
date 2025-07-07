@@ -43,7 +43,11 @@ public class FreshCheese extends OpMode{
                 //Update status
                 Globals.INSTANCE.backwardsRobotState());
 
-        Mercurial.gamepad1().touchpad().onTrue(
+        Mercurial.gamepad1().ps().onTrue(
+                Globals.INSTANCE.toggleBackwardsMode() // Will only work if in IDLE state
+        );
+
+        Mercurial.gamepad1().ps().onTrue(
                 Globals.INSTANCE.goToIdle()
         );
 
@@ -68,12 +72,19 @@ public class FreshCheese extends OpMode{
         );
 
         // Arm binds
+        Mercurial.gamepad1().cross().onTrue(
+                Arm.INSTANCE.adjustArmUp()
+        );
+
+        Mercurial.gamepad1().triangle().onTrue(
+                Arm.INSTANCE.adjustArmDown()
+        );
         Mercurial.gamepad2().cross().onTrue(
-            Arm.INSTANCE.adjustArmDown()
+            Arm.INSTANCE.adjustArmUp()
         );
 
         Mercurial.gamepad2().triangle().onTrue(
-            Arm.INSTANCE.adjustArmUp()
+            Arm.INSTANCE.adjustArmDown()
         );
 
         Mercurial.gamepad2().options().onTrue(

@@ -12,6 +12,12 @@ public enum RobotState {
     HOVERBEFOREGRAB,
     GRAB,
 
+    // Backwards sample states
+    BACKWARDHOVERBEFOREGRAB,
+    BACKWARDGRAB,
+    BACKWARDHOVERAFTERGRAB,
+    BACKWARDSCORE,
+
     // New specimen scoring states
     DEPOSITSPECIMEN,
     SPECHOVER,
