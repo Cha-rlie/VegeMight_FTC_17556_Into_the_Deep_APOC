@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-@TeleOp
+@TeleOp(name="GM0 OpMode", group="Testing OpModes")
 public class ONLYDRIVE extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {

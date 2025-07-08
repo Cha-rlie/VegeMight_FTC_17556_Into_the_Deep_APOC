@@ -11,7 +11,7 @@ import dev.frozenmilk.dairy.core.FeatureRegistrar;
 import dev.frozenmilk.mercurial.Mercurial;
 import dev.frozenmilk.mercurial.commands.Command;
 
-@TeleOp(name= "TESTING")
+@TeleOp(name= "TESTING", group="Testing OpModes")
 @Config
 @Mercurial.Attach
 @Intake.Attach

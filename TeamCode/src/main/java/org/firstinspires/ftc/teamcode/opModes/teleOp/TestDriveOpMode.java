@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.dairyFarm.subsytems.Pitching;
 import dev.frozenmilk.mercurial.Mercurial;
 import dev.frozenmilk.mercurial.commands.groups.Parallel;
 
-@TeleOp(name="TestDriveOpMode")
+@TeleOp(name="TestDriveOpMode", group="Testing OpModes")
 @Config
 
 @Mercurial.Attach
