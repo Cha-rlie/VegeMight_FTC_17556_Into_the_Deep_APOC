@@ -31,54 +31,12 @@ public class OLDINTAKE extends SDKSubsystem {
     public static final OLDINTAKE INSTANCE = new OLDINTAKE();
 
     private final Cell<CachingServo> clawServo = subsystemCell(() -> new CachingServo(getHardwareMap().get(Servo.class, "sampleManipulator")));
-    private final Cell<CachingServo> clawRot = subsystemCell(()-> new CachingServo(getHardwareMap().get(Servo.class,"clawRot")));
+    private final Cell<CachingServo> clawRot = subsystemCell(()-> new CachingServo(getHardwareMap().get(Servo.class,"claw")));
+    private final Cell<CachingServo> wristServo = subsystemCell(()-> new CachingServo(getHardwareMap().get(Servo.class, "wrist")));
+    private final Cell<CachingServo> armWristServo = subsystemCell(()-> new CachingServo(getHardwareMap().get(Servo.class,"armWrist")));
 
     public boolean clawOpen = false;
     public double clawAdjustmentStage = 0;
-    private HashMap<Object, Command> stateToCommandMap;
-
-    private OLDINTAKE(){
-        stateToCommandMap = new HashMap<Object, Command>() {{
-            put(RobotState.IDLE, new Lambda("IDLE ARM").addExecute(() -> {
-                clawOpen=false;
-                clawAdjustmentStage=0;
-            }));
-            put(RobotState.DEPOSIT, new Lambda("DEPOSIT ARM").addExecute(() -> {
-                clawOpen=false;
-                clawAdjustmentStage=4;
-            }));
-            put(RobotState.HOVERBEFOREGRAB, new Lambda("HBG ARM").addExecute(() -> {
-                clawOpen=true;
-                clawAdjustmentStage=0;
-            }));
-            put(RobotState.GRAB, new Lambda("GRAB ARM").addExecute(() -> {
-                clawOpen=true;
-                clawAdjustmentStage=0;
-            }));
-            put(RobotState.HOVERAFTERGRAB, new Lambda("HAG ARM").addExecute(() -> {
-                clawOpen=false;
-                clawAdjustmentStage=0;
-            }));
-            put(RobotState.SPECHOVER, new Lambda("INTAKE SPECIMEN ARM").addExecute(() -> {
-                clawOpen=true;
-                clawAdjustmentStage=0;
-            }));
-            put(RobotState.SPECGRAB, new Lambda("INTAKE SPECIMEN ARM").addExecute(() -> {
-                clawOpen=false;
-                clawAdjustmentStage=0;
-            }));
-            put(RobotState.DEPOSITSPECIMEN,new Lambda("DEPOSIT SPECIMEN ARM").addExecute(() -> {
-                clawOpen=true;
-                clawAdjustmentStage=4;
-            }));
-            put(RobotState.PARKASCENT, new Lambda("PARK ASCENT ARM").addExecute(() -> {
-                //This doesn't exist rn
-            }));
-            put(RobotState.PARKNOASCENT, new Lambda("PARK NO ASCENT ARM").addExecute(() -> {
-                // Yeah nah don't got time for this
-            }));
-        }};
-    }
 
     @Override
     public void preUserInitHook(@NonNull Wrapper opMode) {
@@ -87,7 +45,7 @@ public class OLDINTAKE extends SDKSubsystem {
 
         setDefaultCommand(
                 new Parallel(
-                updateClaw(),
+                updateIntake(),
                 rotateClaw()
                 )
         );
@@ -95,15 +53,92 @@ public class OLDINTAKE extends SDKSubsystem {
     }
 
     @NonNull
-    public Lambda updateClaw() {
-        return new Lambda("updateClaw")
+    public Lambda updateIntake() {
+        return new Lambda("turnwrist")
                 .addRequirements(INSTANCE)
                 .addExecute(()-> {
                             if (Globals.updateRobotStateTrue == true) {
-                                new Lambda("Run Change State for Claw").addExecute(() -> stateToCommandMap.get(Globals.getRobotState()));
+                                switch (Globals.INSTANCE.getRobotState()) {
+                                    case IDLE:
+                                        wristServo.get().setPosition(0.12);
+                                        armWristServo.get().setPosition(0);
+                                        clawOpen=false;
+                                        clawAdjustmentStage=0;
+                                        break;
+                                    case DEPOSIT:
+                                        wristServo.get().setPosition(0.51);
+                                        armWristServo.get().setPosition(0);
+                                        clawOpen=false;
+                                        clawAdjustmentStage=4;
+                                        break;
+                                    case HOVERAFTERGRAB:
+                                        wristServo.get().setPosition(0.21);
+                                        armWristServo.get().setPosition(0);
+                                        clawOpen=false;
+                                        clawAdjustmentStage=0;
+                                        break;
+                                    case HOVERBEFOREGRAB:
+                                        wristServo.get().setPosition(0.21);
+                                        armWristServo.get().setPosition(0);
+                                        clawOpen=true;
+                                        clawAdjustmentStage=0;
+                                        break;
+                                    case GRAB:
+                                        wristServo.get().setPosition(0.21);
+                                        armWristServo.get().setPosition(0);
+                                        clawOpen=true;
+                                        clawAdjustmentStage=0;
+                                        break;
+                                    default:
+                                        wristServo.get().setPosition(0.12);
+                                        armWristServo.get().setPosition(0);
+                                        clawOpen=false;
+                                        clawAdjustmentStage=0;
+                                        break;
+                                }
                             }
                         }
                 );
+    }
+
+    @NonNull
+    public Lambda adjustWristDown() {
+        return new Lambda("adjust wrist")
+                .addExecute(()-> {
+                    wristServo.get().setPosition(wristServo.get().getPosition()-0.01);
+                    getTelemetry().addLine("Wrist Adjusted");
+                    getTelemetry().update();
+                });
+    }
+
+    @NonNull
+    public Lambda adjustWristUp() {
+        return new Lambda("adjust wrist")
+                .addExecute(()-> {
+                    wristServo.get().setPosition(wristServo.get().getPosition()+0.01);
+                    getTelemetry().addLine("Wrist Adjusted");
+                    getTelemetry().update();
+                });
+    }
+
+    @NonNull
+    public Lambda adjustWristArmDown() {
+        return new Lambda("adjust wrist")
+                .addExecute(()-> {
+                    armWristServo.get().setPosition(wristServo.get().getPosition()-0.01);
+                    getTelemetry().addLine("Wrist Adjusted");
+                    getTelemetry().update();
+                });
+    }
+
+    @NonNull
+    public Lambda adjustWristArmUp() {
+        return new Lambda("adjust wrist")
+                .addExecute(()-> {
+                    armWristServo.get().setPosition(wristServo.get().getPosition()+0.01);
+                    getTelemetry().addLine("Wrist Adjusted");
+                    getTelemetry().update();
+                });
     }
 
     @NonNull
