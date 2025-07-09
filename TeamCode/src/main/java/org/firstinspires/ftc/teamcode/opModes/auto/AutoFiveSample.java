@@ -44,7 +44,7 @@ public class AutoFiveSample extends OpMode {
 
     // Initialise the poses
     private final Pose startPose = new Pose(9.000, 113, Math.toRadians(0));  // Starting position
-    private final Pose scorePose = new Pose(14.7, 128.8, Math.toRadians(135)); // Scoring position
+    private final Pose scorePose = new Pose(14.7, 128.8, Math.toRadians(-45)); // Scoring position
 
     private final Pose pickup1Pose = new Pose(24, 121.5, Math.toRadians(0)); // First sample pickup
     private final Pose pickup2Pose = new Pose(24, 131.5, Math.toRadians(0)); // Second sample pickup
@@ -72,7 +72,7 @@ public class AutoFiveSample extends OpMode {
                                 new Point(24.000, 121.500, Point.CARTESIAN)
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(135), Math.toRadians(180))
+                .setLinearHeadingInterpolation(Math.toRadians(-45), Math.toRadians(0))
                 .build();
 
         scorePickup1 = follower.pathBuilder()
@@ -82,7 +82,7 @@ public class AutoFiveSample extends OpMode {
                                 new Point(14.700, 128.800, Point.CARTESIAN)
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(135))
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(-45))
                 .build();
 
         grabPickup2 = follower.pathBuilder()
@@ -92,7 +92,7 @@ public class AutoFiveSample extends OpMode {
                                 new Point(24.000, 131.500, Point.CARTESIAN)
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(135), Math.toRadians(180))
+                .setLinearHeadingInterpolation(Math.toRadians(-45), Math.toRadians(0))
                 .build();
 
         scorePickup2 = follower.pathBuilder()
@@ -102,7 +102,7 @@ public class AutoFiveSample extends OpMode {
                                 new Point(14.700, 128.800, Point.CARTESIAN)
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(135))
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(-45))
                 .build();
 
         grabPickup3 = follower.pathBuilder()
@@ -112,7 +112,7 @@ public class AutoFiveSample extends OpMode {
                                 new Point(24.000, 135.000, Point.CARTESIAN)
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(135), Math.toRadians(210))
+                .setLinearHeadingInterpolation(Math.toRadians(-45), Math.toRadians(30))
                 .build();
 
         scorePickup3 = follower.pathBuilder()
@@ -122,7 +122,7 @@ public class AutoFiveSample extends OpMode {
                                 new Point(14.700, 128.800, Point.CARTESIAN)
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(210), Math.toRadians(135))
+                .setLinearHeadingInterpolation(Math.toRadians(30), Math.toRadians(-45))
                 .build();
     }
 
