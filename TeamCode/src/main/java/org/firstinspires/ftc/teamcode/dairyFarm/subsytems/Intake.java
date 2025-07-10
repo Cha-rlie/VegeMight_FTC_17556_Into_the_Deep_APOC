@@ -31,21 +31,24 @@ import kotlin.annotation.MustBeDocumented;
 public class Intake extends SDKSubsystem {
     public static final Intake INSTANCE = new Intake();
 
-    private final Cell<CachingServo> intakeServo = subsystemCell(() -> new CachingServo(getHardwareMap().get(Servo.class, "SM")));
-
+    //private final Cell<CachingServo> intakeServo = subsystemCell(() -> new CachingServo(getHardwareMap().get(Servo.class, "SM")));
+    private final Cell<CachingCRServo> intakeCRServo = subsystemCell(() -> new CachingCRServo(getHardwareMap().get(CRServo.class, "SM")));
     private static double targetPos = 0;
 
     public static boolean intakeIsTrue = true;
     public static double speedOfRotation=1;
+    private static double spinServoPower = 0;
 
     public Intake() {}
 
     @Override
     public void preUserInitHook(@NonNull Wrapper opMode) {
         // Init sequence
-        intakeServo.get().setDirection(Servo.Direction.REVERSE);
-
+        //intakeServo.get().setDirection(Servo.Direction.REVERSE);
+        intakeCRServo.get().setDirection(CRServo.Direction.FORWARD);
         targetPos = 0;
+        spinServoPower = 0;
+        //intakeCRServo.get().setPower(1);
 
         getTelemetry().addLine("Intake Initalising");
 
@@ -55,16 +58,17 @@ public class Intake extends SDKSubsystem {
 
     @Override
     public void preUserLoopHook(@NonNull Wrapper opMode) {
-        getTelemetry().addData("Actual SM Servo Pos", intakeServo.get().getPosition());
-        getTelemetry().addData("Target SM Servo Pos", targetPos);
+        //getTelemetry().addData("Actual SM Servo Pos", intakeServo.get().getPosition());
+        //getTelemetry().addData("Target SM Servo Pos", targetPos);
+        getTelemetry().addData("CR Intake Power", intakeCRServo.get().getPower());
     }
 
     public Lambda adjustClawForwards() {
         return new Lambda ("TESTING")
                 .addExecute(()-> {
                     targetPos += 0.01;
-                    intakeServo.get().setPosition(targetPos);
-                    getTelemetry().addData("ServoPosition",intakeServo.get().getPosition());
+                    //intakeServo.get().setPosition(targetPos);
+                    //getTelemetry().addData("ServoPosition",intakeServo.get().getPosition());
                 });
     }
 
@@ -72,36 +76,39 @@ public class Intake extends SDKSubsystem {
         return new Lambda ("TESTING")
                 .addExecute(()-> {
                     targetPos -= 0.01;
-                    intakeServo.get().setPosition(targetPos);
-                    getTelemetry().addData("ServoPosition",intakeServo.get().getPosition());
+                    //intakeServo.get().setPosition(targetPos);
+                    //getTelemetry().addData("ServoPosition",intakeServo.get().getPosition());
                 });
     }
 
     @NonNull
     public Lambda turnClawWithState() {
         return new Lambda("Spin SM by State")
-                .addRequirements(INSTANCE)
+                //.addRequirements(INSTANCE)
                 .addExecute(() -> {
-                    if (Globals.updateRobotStateTrue && !Globals.intakeAcceptState) {
-                        Globals.intakeAcceptState = true;
-                        switch (Globals.getRobotState()) {
-                            case GRAB:
-                                targetPos += 0.5; // Used to be 0.25
-                                break;
-                            case DEPOSIT:
-                                //new Wait(800);
-                                //targetPos = 0;
-                                break;
-                            case IDLE:
-                                if (Globals.lastRobotState == RobotState.DEPOSIT) {
-                                    targetPos = 0;
-                                }
-                            default:
-                                // Keep targetPos the same
-                                break;
-                        }
-                    }
-                    intakeServo.get().setPosition(targetPos);
+//                    if (Globals.updateRobotStateTrue && !Globals.intakeAcceptState) {
+//                        Globals.intakeAcceptState = true;
+//                        switch (Globals.getRobotState()) {
+//                            case GRAB:
+//                                //targetPos += 0.5; // Used to be 0.25
+//                                spinServoPower = 0.5;
+//                                break;
+//                            case DEPOSIT:
+//                                //new Wait(800);
+//                                //targetPos = 0;
+//                                break;
+//                            case IDLE:
+//                                if (Globals.lastRobotState == RobotState.DEPOSIT) {
+//                                    //targetPos = 0;
+//                                    spinServoPower = -0.5;
+//                                }
+//                            default:
+//                                // Keep targetPos the same
+//                                break;
+//                        }
+//                    }
+                    //intakeServo.get().setPosition(targetPos);
+                    intakeCRServo.get().setPower(spinServoPower);
                 });
     }
 
@@ -110,9 +117,9 @@ public class Intake extends SDKSubsystem {
         return new Lambda ("Turn Intake")
                 .addExecute(()-> {
                     if (intakeIsTrue) {
-                        intakeServo.get().setPosition(0.77); // 0.77
+                        //intakeServo.get().setPosition(0.77); // 0.77
                     } else {
-                        intakeServo.get().setPosition(0.52); // 0.52
+                        //intakeServo.get().setPosition(0.52); // 0.52
                     }
                     getTelemetry().addLine("Intake Turning");
                 });
@@ -122,17 +129,27 @@ public class Intake extends SDKSubsystem {
     public Lambda toggleIntake() {
         return new Lambda ("Toggle Intake")
                 .addExecute(()-> {
-                    targetPos += 0.25;
+                    //targetPos += 0.25;
+                    if (spinServoPower == 0) {
+                        spinServoPower = 0.5;
+                    } else {
+                        spinServoPower = 0;
+                    }
                     getTelemetry().addLine("Intake Toggled");
                 });
     }
 
     @NonNull
-    public Lambda resetIntake() {
+    public Lambda resetIntake() { //REJECT
         return new Lambda("Reset Intake")
                 .addRequirements(INSTANCE)
                 .addExecute(() -> {
-                   targetPos = 0;
+                   //targetPos = 0;
+                   if (spinServoPower != 0) {
+                       spinServoPower = 0;
+                   } else {
+                       spinServoPower = -0.5;
+                   }
                 });
     }
 

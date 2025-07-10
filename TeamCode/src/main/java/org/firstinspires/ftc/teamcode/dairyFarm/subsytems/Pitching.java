@@ -108,9 +108,7 @@ public class Pitching extends SDKSubsystem {
                             if (stateToValueMap.containsKey(Globals.getRobotState())) {
                                 if (Globals.getRobotState() == RobotState.IDLE) {
                                     if (Globals.lastRobotState == RobotState.GRAB || Globals.lastRobotState == RobotState.HOVERBEFOREGRAB || Globals.lastRobotState == RobotState.HOVERAFTERGRAB) {
-                                        if (Lift.INSTANCE.notAdjusted()) {
-                                            runToPos = stateToValueMap.get(Globals.getRobotState());
-                                        }
+                                        runToPos = stateToValueMap.get(Globals.getRobotState());
                                     }
                                 } else {
                                     runToPos = stateToValueMap.get(Globals.getRobotState());

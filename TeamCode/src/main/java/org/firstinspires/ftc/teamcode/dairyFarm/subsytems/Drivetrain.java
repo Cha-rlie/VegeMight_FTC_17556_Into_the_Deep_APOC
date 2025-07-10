@@ -75,13 +75,34 @@ public class Drivetrain extends SDKSubsystem {
         //follower = new Follower(FeatureRegistrar.getActiveOpMode().hardwareMap);
 
         //if (FeatureRegistrar.getActiveOpModeWrapper().getOpModeType() == OpModeMeta.Flavor.AUTONOMOUS)
-        setDefaultCommand(new Parallel(drive(), updateVelocityAdjuster()));
+        setDefaultCommand(driveGMO());
+        //setDefaultCommand(new Parallel(drive(), updateVelocityAdjuster()));
         getTelemetry().addLine("Drivetrain Initialised");
     }
 
     @Override
     public void preUserLoopHook(@NonNull Wrapper opMode) {
         getTelemetry().addData("Drivetrain Velocity Adjuster", velocityAdjuster);
+    }
+
+    @NonNull
+    public Lambda driveGMO() {
+        return new Lambda("GM0 Drive")
+                .addExecute(() -> {
+                    double y = Mercurial.gamepad1().leftStickY().state();
+                    double x = Mercurial.gamepad1().leftStickX().state();
+                    double rx = Mercurial.gamepad1().rightStickX().state();
+                    double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
+                    double frontLeftPower = (y + x + rx) / denominator;
+                    double backLeftPower = (y - x + rx) / denominator;
+                    double frontRightPower = (y - x - rx) / denominator;
+                    double backRightPower = (y + x - rx) / denominator;
+
+                    motorFL.get().setPower(frontLeftPower);
+                    motorBL.get().setPower(backLeftPower);
+                    motorFR.get().setPower(frontRightPower);
+                    motorBR.get().setPower(backRightPower);
+                });
     }
 
     @NonNull
